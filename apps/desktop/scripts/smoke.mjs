@@ -28,6 +28,7 @@ try {
   page.on('console', (message) => {
     if (/content security policy|violates.*directive/i.test(message.text())) cspErrors.push(message.text())
   })
+  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
   await page.reload()
   await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
   assert.deepEqual(cspErrors, [])
@@ -70,17 +71,6 @@ try {
   assert.equal(await page.evaluate(() => window.open('about:blank') === null), true)
   assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length), 1)
 
-  const navigationBlocked = app.evaluate(({ BrowserWindow }) => new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('Navigation event did not fire')), 5_000)
-    BrowserWindow.getAllWindows()[0].webContents.once('will-frame-navigate', (event) => {
-      clearTimeout(timer)
-      resolve(event.defaultPrevented)
-    })
-  }))
-  await page.evaluate(() => { location.href = 'about:blank' })
-  assert.equal(await navigationBlocked, true)
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
-
   for (const width of [1440, 1024, 390]) {
     await page.setViewportSize({ width, height: 760 })
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
@@ -90,6 +80,21 @@ try {
   const screenshot = join(appDirectory, 'out/smoke.png')
   await page.screenshot({ path: screenshot, fullPage: true })
   assert.deepEqual(rendererErrors, [])
+
+  const initialUrl = page.url()
+  await app.evaluate(({ BrowserWindow }) => {
+    globalThis.smokeNavigationBlocked = new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(false), 5_000)
+      BrowserWindow.getAllWindows()[0].webContents.once('will-frame-navigate', (event) => {
+        clearTimeout(timer)
+        resolve(event.defaultPrevented)
+      })
+    })
+  })
+  await page.evaluate(() => { location.href = 'http://127.0.0.1:5180/blocked-smoke' })
+  assert.equal(await app.evaluate(() => globalThis.smokeNavigationBlocked), true)
+  assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.getURL()), initialUrl)
+
   console.log(`PASS: real Electron renderer, sandbox, CSP, navigation and popup restrictions; screenshot: ${screenshot}`)
 } finally {
   await app.close()

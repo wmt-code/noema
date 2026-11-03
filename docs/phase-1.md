@@ -5,7 +5,7 @@
 | 步骤 | 范围 | 验证标准 | 状态 |
 |---|---|---|---|
 | 1 | pnpm Workspace、Node.js 与 pnpm 版本、忽略规则、开发文档 | 依赖安装和锁文件校验通过 | 已完成 |
-| 2A | Electron + electron-vite + React + TypeScript 最小窗口 | 类型检查、构建通过，桌面窗口可启动 | 骨架已完成，实际窗口验证待 Electron 运行时下载 |
+| 2A | Electron + electron-vite + React + TypeScript 最小窗口 | 类型检查、构建通过，桌面窗口可启动 | 已完成 |
 | 2B | NestJS 最小服务与健康检查 | 类型检查、构建和健康接口测试通过 | 已完成 |
 | 3 | ESLint、Prettier 及根目录检查命令 | 两端统一检查通过 | 待开发 |
 | 4 | Docker Compose 中的 PostgreSQL、Redis 与 Prisma 连接 | 服务健康，Prisma 可连接测试数据库 | 待开发 |
@@ -31,8 +31,9 @@
 ## 桌面端验证记录
 
 - `typecheck`、`build` 通过，包含主进程和 React 渲染入口。
-- 当前 Electron 45 官方运行时下载速度较慢，真实窗口、CSP 行为和截图尚未验证；不能将构建通过视为窗口启动通过。
-- 运行时下载完成后，先执行 `build`，再运行 `corepack pnpm --filter @noema/desktop smoke`；截图保存到被 Git 忽略的 `apps/desktop/out/smoke.png`。
+- Electron 45 官方运行时已下载，真实生产窗口、中文渲染、沙箱与隔离、无 Node 访问、CSP、导航与弹窗限制均已验证。
+- `corepack pnpm --filter @noema/desktop smoke` 通过，截图已查看，保存到被 Git 忽略的 `apps/desktop/out/smoke.png`；检查前需先执行 `build`。
+- `corepack pnpm --filter @noema/desktop smoke:dev` 通过，验证开发窗口、CSP、HMR 消息、整页刷新与其他导航拦截。开发地址固定为 `http://127.0.0.1:5180`，避开本机其他项目占用的 5173。
 - 当前没有 preload 桥，因此 electron-vite 构建会提示 `preload config is missing`；后续需要本地能力时再新增。
 
 ## 后端验证记录

@@ -9,7 +9,8 @@
     "dev": "electron-vite dev",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "build": "electron-vite build",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "smoke:dev": "node scripts/smoke-dev.mjs"
   },
   "dependencies": {
     "react": "19.3.1",
