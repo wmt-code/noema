@@ -17,9 +17,40 @@ corepack pnpm install
 corepack pnpm --version
 ```
 
-如系统未安装 Corepack，可使用 `npx --yes pnpm@12.16.1 install`。
+如系统未安装 Corepack，可使用 `npx --yes pnpm@12.16.1 install`，并通过 `npx --yes pnpm@12.16.1 --filter @noema/server dev` 或 `npx --yes pnpm@12.16.1 --filter @noema/desktop dev` 启动应用；根目录的快捷命令依赖 Corepack。
 
-当前仅完成 Workspace 基线，尚无应用启动命令。应用分别放在 `apps/*`，共享包放在 `packages/*`，随对应开发步骤创建。
+Electron 45 在首次启动时下载桌面运行时，需要访问官方分发地址；无需单独下载 Playwright 浏览器。使用代理时，需按[桌面端说明](apps/desktop/README.md)设置 Electron 下载器的代理选项。
+
+## 运行最小骨架
+
+在两个终端分别运行：
+
+```sh
+corepack pnpm dev:server
+corepack pnpm dev:desktop
+```
+
+应用分别位于 `apps/server` 和 `apps/desktop`。启动方式与当前范围见[服务端说明](apps/server/README.md)和[桌面端说明](apps/desktop/README.md)。后端启动后可访问 <http://127.0.0.1:3000/health>；桌面启动页暂时独立运行。
+
+安装依赖后，可分别运行类型检查和构建：
+
+```sh
+corepack pnpm --filter @noema/server typecheck
+corepack pnpm --filter @noema/server build
+corepack pnpm --filter @noema/desktop typecheck
+corepack pnpm --filter @noema/desktop build
+```
+
+运行后端 HTTP 测试及桌面端启动检查：
+
+```sh
+corepack pnpm --filter @noema/server test
+corepack pnpm --filter @noema/desktop smoke
+```
+
+桌面端启动检查需要可用的图形桌面；具体前置条件见桌面端 README。
+
+共享包按需放入 `packages/*`，当前尚未接入数据库、认证或项目管理。
 
 ## 分步开发
 

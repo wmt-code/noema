@@ -4,6 +4,10 @@
   "private": true,
   "description": "面向个人创作者的 AI 短剧创作平台",
   "packageManager": "pnpm@12.16.1",
+  "scripts": {
+    "dev:desktop": "corepack pnpm --filter @noema/desktop dev",
+    "dev:server": "corepack pnpm --filter @noema/server dev"
+  },
   "engines": {
     "node": ">=24.14.1 <25"
   }
