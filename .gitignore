@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output and reports
+dist/
+out/
+release/
+coverage/
+*.tsbuildinfo
+
+# Local configuration
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+# Logs and operating system files
+*.log
+.DS_Store
+Thumbs.db
+
+# Git worktrees
+.worktrees/
