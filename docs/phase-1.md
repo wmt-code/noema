@@ -9,7 +9,7 @@
 | 2B   | NestJS 最小服务与健康检查                                | 类型检查、构建和健康接口测试通过                | 已完成 |
 | 3    | ESLint、Prettier 及根目录检查命令                        | 两端统一检查通过                                | 已完成 |
 | 4    | Docker Compose 中的 PostgreSQL、Redis 与 Prisma 连接     | 服务健康，Prisma 可连接测试数据库               | 已完成 |
-| 5    | 核心数据模型与首个数据库迁移                             | 空库迁移通过，关系与约束可验证                  | 待开发 |
+| 5    | 核心数据模型与首个数据库迁移                             | 空库迁移通过，关系与约束可验证                  | 已完成 |
 | 6    | 基础认证与资源归属校验                                   | 登录、未认证访问、越权访问测试通过              | 待开发 |
 | 7    | 项目与剧集管理 API 及共享 Schema                         | 创建、查询、修改、删除与持久化测试通过          | 待开发 |
 | 8    | Tailwind CSS、shadcn/ui、桌面工作台和项目管理页面        | 界面调用真实 API 创建项目、剧集，重启后数据保留 | 待开发 |
@@ -44,6 +44,15 @@
 - 当前数据库 `public` 下业务表为 0；未提前创建第五步的数据模型或迁移。
 - 根目录 `check`、4 项服务端 HTTP 测试、双端构建及 `install --frozen-lockfile` 通过；普通测试无需启动数据库，并验证缺失连接串时启动失败。
 - 生产与开发启动入口均从根目录 `.env` 加载连接配置并返回 `200 {"status":"ok"}`；开发入口已验证源码修改后自动重启且不会因编译产物写入而循环重启。开发脚本使用 `process.loadEnvFile`，避免 Node 24 watch 与 `--env-file` 扩大监听范围的问题。
+
+## 第五步验证记录
+
+- `prisma/schema.prisma` 定义 Project、Episode、ScriptRevision、Character、Scene、Shot、Asset、GenerationTask、QualityReview、ExportRecord，核心实体使用 UUID，包含角色与镜头多对多、镜头素材关联及生成输出关系。
+- 首个迁移 `20261103000000_init` 已应用到本地开发库；`prisma migrate status` 确认已同步，数据库与 Prisma schema 差异检查通过。迁移使用事务，包含外键、唯一索引、数值 CHECK 约束与历史保护触发器。
+- `corepack pnpm db:test` 的 7 项检查通过：在随机独立 schema 中从空结构部署迁移两次，验证实体持久化、关联查询、版本与排序唯一性、幂等键与供应商任务 ID、外键、选用素材归属、数值约束、历史版本和素材防覆盖、费用精度及删除行为；测试结束清理独立 schema，不写入开发业务表。
+- 删除项目级联清理剧集、剧本、场景、镜头、生成任务和导出记录；可复用素材及其审核保留，已删除任务的素材来源关联置空。被镜头引用的素材不能直接删除。
+- 新增根目录 `db:migrate`、`db:deploy`、`db:test` 入口，补齐根目录与服务端数据库使用说明；普通 `test` 仍无需数据库。
+- `db:validate`、`infra:check`、`db:check`、根目录 `check`、4 项 HTTP 测试、双端构建及 `install --frozen-lockfile` 全部通过。认证、资源归属 API 校验和项目管理接口按第六、七步继续实现。
 
 ## 桌面端验证记录
 

@@ -22,15 +22,17 @@ corepack pnpm --filter @noema/server test
 
 `start` 运行已有的 `dist/main.js`，需要先构建；`test` 先构建，再用 Node 原生 test/assert/fetch 启动随机端口验证健康接口、404 和启动失败，结束时关闭监听。普通测试使用不可达的数据库地址验证存活检查不依赖数据库，无需 Docker。
 
-真实数据库连接检查单独执行：
+真实数据库检查单独执行：
 
 ```sh
 corepack pnpm infra:up
 corepack pnpm infra:check
+corepack pnpm db:deploy
 corepack pnpm db:check
+corepack pnpm db:test
 ```
 
-`db:check` 通过 Nest 容器获取 `PrismaService`、连接 PostgreSQL 并执行 `SELECT 1`，随后关闭容器及连接池。它使用当前 `DATABASE_URL`，不会迁移或写入数据库。Redis 此步骤通过 Compose 健康检查与 `redis-cli ping` 验证，应用内队列接入在后续阶段实现。
+`db:deploy` 应用仓库中的迁移。`db:check` 通过 Nest 容器获取 `PrismaService`、连接 PostgreSQL 并执行 `SELECT 1`，随后关闭容器及连接池；它使用当前 `DATABASE_URL`，不会迁移或写入数据库。`db:test` 在随机独立 schema 中从空结构部署迁移两次，验证 10 个核心实体、多对多关联、选用素材、唯一约束、外键、数值范围、历史保护及删除行为，结束后清理测试 schema，不写入 `public` 业务表；账号需有创建 schema 的权限。新增模型变更使用根目录 `corepack pnpm db:migrate --name <变更名>`，提交生成的 SQL 迁移。Redis 通过 Compose 健康检查与 `redis-cli ping` 验证，应用内队列接入在后续阶段实现。
 
 ## 环境与接口
 

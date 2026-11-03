@@ -29,12 +29,18 @@ Electron 45 在首次启动时下载桌面运行时，需要访问官方分发�
 corepack pnpm infra:up
 corepack pnpm infra:check
 corepack pnpm db:validate
+corepack pnpm db:deploy
 corepack pnpm db:check
+corepack pnpm db:test
 ```
 
 Compose 配置位于 `infra/compose.yaml`，使用 PostgreSQL 17 和 Redis 7，仅绑定本机 `127.0.0.1:15432`、`127.0.0.1:16379`。默认开发账号、密码和数据库为 `noema`、`noema_local`、`noema`，不用于生产环境；连接串见 `.env.example`。Redis 开启 AOF 和 `noeviction`，PostgreSQL 与 Redis 均使用命名卷保存数据。`infra:up` 会等待两个服务健康。
 
-`db:check` 通过 Nest 的 Prisma provider 执行只读 `SELECT 1`；不创建业务表。`prisma/schema.prisma` 与根目录 `prisma.config.ts` 管理 Prisma 配置，客户端输出到被忽略的 `apps/server/src/generated/prisma/`，服务端开发、构建、测试和类型检查会自动生成。数据库模型及首次迁移在第五步实现。
+`db:deploy` 应用已提交的数据库迁移，重复运行不会重建数据；开发新模型后运行 `corepack pnpm db:migrate --name <变更名>` 创建迁移。`db:check` 通过 Nest 的 Prisma provider 执行只读 `SELECT 1`。`db:test` 在当前数据库内创建随机独立 schema，从空结构部署迁移并验证核心实体、关系及约束，结束后删除该测试 schema；连接账号需要创建 schema 的权限。
+
+`prisma/schema.prisma` 定义 10 个核心实体与镜头素材关联表，`prisma/migrations/` 保存迁移。剧本版本、同级场景和镜头顺序、任务幂等键及素材存储键有唯一约束；镜头只能选用已关联的素材。迁移另含正数/非负数约束及防止修改剧本历史、素材存储键和类型的触发器，这些原生 PostgreSQL 约束不能由 Prisma schema 表达。剧本修改需要创建新版本，重新生成素材需要新建 Asset 与存储键；对象存储本身仍需禁止覆盖旧文件。删除项目会级联清理剧集等业务记录，可复用素材与审核记录保留，任务来源关联置空。
+
+根目录 `prisma.config.ts` 管理连接配置，客户端输出到被忽略的 `apps/server/src/generated/prisma/`，服务端开发、构建、测试和类型检查会自动生成。
 
 ```sh
 corepack pnpm infra:down
