@@ -7,6 +7,12 @@
   "scripts": {
     "dev:desktop": "corepack pnpm --filter @noema/desktop dev",
     "dev:server": "corepack pnpm --filter @noema/server dev",
+    "infra:up": "docker compose -f infra/compose.yaml up -d --wait",
+    "infra:down": "docker compose -f infra/compose.yaml down",
+    "infra:check": "docker compose -f infra/compose.yaml exec -T postgres pg_isready -U noema -d noema && docker compose -f infra/compose.yaml exec -T redis redis-cli ping",
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:check": "corepack pnpm --filter @noema/server db:check",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix --max-warnings 0",
     "format": "prettier . --write",
@@ -26,6 +32,7 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "17.14.0",
     "prettier": "3.9.10",
+    "prisma": "7.10.1",
     "typescript-eslint": "8.72.1"
   }
 }

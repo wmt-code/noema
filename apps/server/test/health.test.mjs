@@ -10,6 +10,8 @@ import { AppModule } from '../dist/app.module.js'
 
 const run = promisify(execFile)
 const main = fileURLToPath(new URL('../dist/main.js', import.meta.url))
+// An unreachable database keeps the liveness tests independent of infrastructure.
+process.env.DATABASE_URL = 'postgresql://unused:unused@127.0.0.1:1/unused'
 
 test('GET /health returns liveness JSON and unknown routes return 404', async (t) => {
   const app = await NestFactory.create(AppModule, { logger: false })
@@ -29,6 +31,19 @@ test('GET /health returns liveness JSON and unknown routes return 404', async (t
   })
   assert.equal(missing.status, 404)
   assert.equal((await missing.json()).statusCode, 404)
+})
+
+test('startup rejects a missing DATABASE_URL', async () => {
+  const env = { ...process.env, PORT: '3000' }
+  delete env.DATABASE_URL
+  await assert.rejects(
+    run(process.execPath, [main], { env, timeout: 10000 }),
+    (error) => {
+      assert.equal(error.code, 1)
+      assert.match(error.stderr, /DATABASE_URL is required/)
+      return true
+    }
+  )
 })
 
 test('startup rejects invalid PORT values without binding', async () => {

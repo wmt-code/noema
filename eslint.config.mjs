@@ -11,6 +11,7 @@ export default defineConfig([
     '**/out/**',
     '**/release/**',
     '**/coverage/**',
+    'apps/server/src/generated/**',
     '.pnpm-store/**',
     '.worktrees/**',
     '.claude/**'
@@ -26,6 +27,7 @@ export default defineConfig([
   {
     files: [
       '**/*.{js,mjs,cjs}',
+      'prisma.config.ts',
       'apps/server/**/*.ts',
       'apps/desktop/*.ts',
       'apps/desktop/src/main/**/*.ts'

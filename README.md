@@ -8,7 +8,7 @@
 
 - Node.js 24 LTS，最低 24.14.1。
 - pnpm 12.16.1，由根目录 `packageManager` 字段固定。
-- Docker Compose，供后续 PostgreSQL、Redis 开发环境使用。
+- Docker Compose，运行 PostgreSQL、Redis 本地开发环境。
 
 在仓库根目录运行：
 
@@ -21,9 +21,30 @@ corepack pnpm --version
 
 Electron 45 在首次启动时下载桌面运行时，需要访问官方分发地址；无需单独下载 Playwright 浏览器。使用代理时，需按[桌面端说明](apps/desktop/README.md)设置 Electron 下载器的代理选项。
 
+## 本地数据库与 Redis
+
+将根目录 `.env.example` 复制为 `.env`（PowerShell：`Copy-Item .env.example .env`），然后运行：
+
+```sh
+corepack pnpm infra:up
+corepack pnpm infra:check
+corepack pnpm db:validate
+corepack pnpm db:check
+```
+
+Compose 配置位于 `infra/compose.yaml`，使用 PostgreSQL 17 和 Redis 7，仅绑定本机 `127.0.0.1:15432`、`127.0.0.1:16379`。默认开发账号、密码和数据库为 `noema`、`noema_local`、`noema`，不用于生产环境；连接串见 `.env.example`。Redis 开启 AOF 和 `noeviction`，PostgreSQL 与 Redis 均使用命名卷保存数据。`infra:up` 会等待两个服务健康。
+
+`db:check` 通过 Nest 的 Prisma provider 执行只读 `SELECT 1`；不创建业务表。`prisma/schema.prisma` 与根目录 `prisma.config.ts` 管理 Prisma 配置，客户端输出到被忽略的 `apps/server/src/generated/prisma/`，服务端开发、构建、测试和类型检查会自动生成。数据库模型及首次迁移在第五步实现。
+
+```sh
+corepack pnpm infra:down
+```
+
+`infra:down` 停止并移除本项目容器，保留数据卷。修改主机端口或数据库凭据时，同步修改 Compose 与 `.env`；已有 PostgreSQL 数据卷不会因修改环境变量而重建账号或改密。
+
 ## 运行最小骨架
 
-在两个终端分别运行：
+完成 `.env` 配置后，在两个终端分别运行：
 
 ```sh
 corepack pnpm dev:server
@@ -65,7 +86,7 @@ corepack pnpm --filter @noema/desktop smoke:dev
 
 桌面端启动检查需要可用的图形桌面；具体前置条件见桌面端 README。
 
-共享包按需放入 `packages/*`，当前尚未接入数据库、认证或项目管理。
+共享包按需放入 `packages/*`，当前已提供本地数据库、Redis 和 Prisma 连接，尚未接入认证或项目管理。
 
 ## 分步开发
 

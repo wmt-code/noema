@@ -8,6 +8,7 @@ out/
 release/
 coverage/
 *.tsbuildinfo
+apps/server/src/generated/
 
 # Local configuration
 .env

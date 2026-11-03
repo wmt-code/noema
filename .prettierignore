@@ -4,6 +4,7 @@
 **/out/
 **/release/
 **/coverage/
+apps/server/src/generated/
 .worktrees/
 .claude/
 pnpm-lock.yaml

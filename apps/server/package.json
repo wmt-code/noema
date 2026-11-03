@@ -4,16 +4,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch --watch-path=src --watch-path=tsconfig.json scripts/dev.mjs",
-    "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "start": "node dist/main.js",
-    "test": "tsc && node --test test/*.test.mjs"
+    "dev": "corepack pnpm db:generate && node --watch --watch-path=src --watch-path=tsconfig.json scripts/dev.mjs",
+    "db:generate": "corepack pnpm --dir ../.. db:generate",
+    "db:check": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/prisma.integration.mjs",
+    "typecheck": "corepack pnpm db:generate && tsc --noEmit",
+    "build": "corepack pnpm db:generate && tsc",
+    "start": "node --env-file-if-exists=../../.env dist/main.js",
+    "test": "corepack pnpm build && node --test test/*.test.mjs"
   },
   "dependencies": {
     "@nestjs/common": "12.3.2",
     "@nestjs/core": "12.3.2",
     "@nestjs/platform-express": "12.3.2",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   },
