@@ -15,7 +15,7 @@ pnpm --filter @noema/desktop build
 pnpm --filter @noema/desktop smoke
 ```
 
-依赖版本均固定于本应用的 `package.json`。应用源码使用严格类型检查；主进程配置的 `skipLibCheck` 只跳过第三方声明检查，避免 electron-vite 对未使用的可选 SWC 类型的直接引用。pnpm 需要在根 `pnpm-workspace.yaml` 配置 `allowBuilds: { electron: true }`，允许 Electron 官方安装脚本下载本平台二进制；不需要下载 Playwright 浏览器。使用 HTTP(S) 代理时，下载器还需要环境变量 `ELECTRON_GET_USE_PROXY=1`。根锁文件由集成步骤统一更新。
+依赖版本均固定于本应用的 `package.json`。应用源码使用严格类型检查；主进程配置的 `skipLibCheck` 只跳过第三方声明检查，避免 electron-vite 对未使用的可选 SWC 类型的直接引用。Electron 45 首次启动时按需下载本平台官方二进制，需能访问 GitHub Releases；该版本没有安装生命周期脚本，无需配置 pnpm `allowBuilds`。不需要下载 Playwright 浏览器。使用 HTTP(S) 代理时，下载器还需要环境变量 `ELECTRON_GET_USE_PROXY=1`。根锁文件由集成步骤统一更新。
 
 `dev` 只监听 `http://127.0.0.1:5173`，端口占用时直接失败。`build` 输出 `out/main` 与 `out/renderer`，并不生成安装包。`smoke` 用已安装的 Electron 启动构建产物，检查真实中文渲染、隔离与沙箱设置、无 Node 访问、生产 CSP、弹窗和导航限制、窄屏溢出；保存 `out/smoke.png` 后关闭应用。无图形桌面的环境需另行配置显示服务；脚本不会关闭沙箱来绕过环境限制。
 
