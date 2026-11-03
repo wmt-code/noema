@@ -28,9 +28,10 @@ try {
   const page = await app.firstWindow()
   page.setDefaultTimeout(10_000)
   const errors = []
-  page.on('pageerror', error => errors.push(error.message))
-  page.on('console', message => {
-    if (/content security policy|violates.*directive/i.test(message.text())) errors.push(message.text())
+  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('console', (message) => {
+    if (/content security policy|violates.*directive/i.test(message.text()))
+      errors.push(message.text())
   })
   await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
   await page.reload()
@@ -38,7 +39,9 @@ try {
   assert.equal(new URL(page.url()).origin, 'http://127.0.0.1:5180')
   await page.evaluate(async () => {
     const { createHotContext } = await import('/@vite/client')
-    createHotContext('/smoke').on('smoke:ping', () => { globalThis.hmrReceived = true })
+    createHotContext('/smoke').on('smoke:ping', () => {
+      globalThis.hmrReceived = true
+    })
   })
   server.ws.send({ type: 'custom', event: 'smoke:ping', data: {} })
   await page.waitForFunction(() => globalThis.hmrReceived === true)
@@ -50,18 +53,33 @@ try {
 
   const initialUrl = page.url()
   await app.evaluate(({ BrowserWindow }) => {
-    globalThis.smokeNavigationBlocked = new Promise(resolve => {
+    globalThis.smokeNavigationBlocked = new Promise((resolve) => {
       const timer = setTimeout(() => resolve(false), 5_000)
-      BrowserWindow.getAllWindows()[0].webContents.once('will-frame-navigate', event => {
-        clearTimeout(timer)
-        resolve(event.defaultPrevented)
-      })
+      BrowserWindow.getAllWindows()[0].webContents.once(
+        'will-frame-navigate',
+        (event) => {
+          clearTimeout(timer)
+          resolve(event.defaultPrevented)
+        }
+      )
     })
   })
-  await page.evaluate(() => { location.href = '/blocked-smoke' })
-  assert.equal(await app.evaluate(() => globalThis.smokeNavigationBlocked), true)
-  assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.getURL()), initialUrl)
-  console.log('PASS: real Electron development renderer, CSP, HMR socket, full reload and navigation restrictions')
+  await page.evaluate(() => {
+    location.href = '/blocked-smoke'
+  })
+  assert.equal(
+    await app.evaluate(() => globalThis.smokeNavigationBlocked),
+    true
+  )
+  assert.equal(
+    await app.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows()[0].webContents.getURL()
+    ),
+    initialUrl
+  )
+  console.log(
+    'PASS: real Electron development renderer, CSP, HMR socket, full reload and navigation restrictions'
+  )
 } finally {
   if (app) await app.close()
   await server.close()

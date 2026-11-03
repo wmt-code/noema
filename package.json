@@ -6,9 +6,26 @@
   "packageManager": "pnpm@12.16.1",
   "scripts": {
     "dev:desktop": "corepack pnpm --filter @noema/desktop dev",
-    "dev:server": "corepack pnpm --filter @noema/server dev"
+    "dev:server": "corepack pnpm --filter @noema/server dev",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix --max-warnings 0",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "typecheck": "corepack pnpm -r typecheck",
+    "test": "corepack pnpm -r test",
+    "build": "corepack pnpm -r build",
+    "check": "corepack pnpm lint && corepack pnpm format:check && corepack pnpm typecheck"
   },
   "engines": {
     "node": ">=24.14.1 <25"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "typescript-eslint": "8.72.1"
   }
 }

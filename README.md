@@ -32,20 +32,35 @@ corepack pnpm dev:desktop
 
 应用分别位于 `apps/server` 和 `apps/desktop`。启动方式与当前范围见[服务端说明](apps/server/README.md)和[桌面端说明](apps/desktop/README.md)。后端启动后可访问 <http://127.0.0.1:3000/health>；桌面启动页暂时独立运行。
 
-安装依赖后，可分别运行类型检查和构建：
+## 统一检查
+
+安装依赖后，在仓库根目录运行：
 
 ```sh
-corepack pnpm --filter @noema/server typecheck
-corepack pnpm --filter @noema/server build
-corepack pnpm --filter @noema/desktop typecheck
-corepack pnpm --filter @noema/desktop build
+corepack pnpm check
+corepack pnpm test
+corepack pnpm build
 ```
 
-运行后端 HTTP 测试及桌面端启动检查：
+`check` 依次执行 ESLint、Prettier 格式检查和两端 TypeScript 类型检查；`test` 执行工作区已有测试，当前为服务端 HTTP 测试；`build` 构建两端应用。检查和构建不会自动启动桌面窗口。
+
+可单独运行检查或修复格式：
 
 ```sh
-corepack pnpm --filter @noema/server test
+corepack pnpm lint
+corepack pnpm lint:fix
+corepack pnpm format:check
+corepack pnpm format
+corepack pnpm typecheck
+```
+
+ESLint 使用根目录 flat config，覆盖两端 TypeScript、React Hooks、配置及测试脚本，并区分 Node.js 与浏览器全局变量。Prettier 统一使用两空格缩进、单引号、无分号、无尾随逗号和 LF 换行。两者忽略依赖、构建产物、本地 worktree 与 `.claude`；Prettier 另行跳过自动生成的锁文件。
+
+构建后可运行桌面端启动检查：
+
+```sh
 corepack pnpm --filter @noema/desktop smoke
+corepack pnpm --filter @noema/desktop smoke:dev
 ```
 
 桌面端启动检查需要可用的图形桌面；具体前置条件见桌面端 README。

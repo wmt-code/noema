@@ -18,21 +18,21 @@
 
 ### 2.1 技术栈
 
-| 层级 | 技术 |
-|---|---|
-| 桌面端 | Electron + electron-vite |
-| 前端 | React + TypeScript |
-| UI | Tailwind CSS + shadcn/ui |
-| 状态管理 | Zustand + TanStack Query |
-| 后端 | NestJS |
-| Agent Runtime | Pi Agent Core |
-| 数据库 | PostgreSQL + Prisma |
-| 任务队列 | BullMQ + Redis |
-| 对象存储 | S3 兼容存储 |
-| AI 服务 | LLM、VLM、Image、Video、TTS API |
-| 媒体处理 | FFmpeg / FFprobe |
-| 包管理 | pnpm Workspace |
-| 部署 | Docker Compose |
+| 层级          | 技术                            |
+| ------------- | ------------------------------- |
+| 桌面端        | Electron + electron-vite        |
+| 前端          | React + TypeScript              |
+| UI            | Tailwind CSS + shadcn/ui        |
+| 状态管理      | Zustand + TanStack Query        |
+| 后端          | NestJS                          |
+| Agent Runtime | Pi Agent Core                   |
+| 数据库        | PostgreSQL + Prisma             |
+| 任务队列      | BullMQ + Redis                  |
+| 对象存储      | S3 兼容存储                     |
+| AI 服务       | LLM、VLM、Image、Video、TTS API |
+| 媒体处理      | FFmpeg / FFprobe                |
+| 包管理        | pnpm Workspace                  |
+| 部署          | Docker Compose                  |
 
 ### 2.2 系统架构
 
@@ -154,18 +154,18 @@ PostgreSQL 保存业务数据及任务状态；Redis / BullMQ 负责队列调度
 
 ### 4.1 核心实体
 
-| 实体 | 关键字段 |
-|---|---|
-| Project | id, name, settings |
-| Episode | id, projectId, title, status |
-| ScriptRevision | id, episodeId, content, version |
-| Character | id, projectId, name, description |
-| Scene | id, episodeId, location, description, order |
-| Shot | id, sceneId, order, duration, prompt, status |
-| Asset | id, type, storageKey, metadata |
-| GenerationTask | id, shotId, type, provider, status, cost |
-| QualityReview | id, assetId, result, issues |
-| ExportRecord | id, episodeId, settings, status |
+| 实体           | 关键字段                                     |
+| -------------- | -------------------------------------------- |
+| Project        | id, name, settings                           |
+| Episode        | id, projectId, title, status                 |
+| ScriptRevision | id, episodeId, content, version              |
+| Character      | id, projectId, name, description             |
+| Scene          | id, episodeId, location, description, order  |
+| Shot           | id, sceneId, order, duration, prompt, status |
+| Asset          | id, type, storageKey, metadata               |
+| GenerationTask | id, shotId, type, provider, status, cost     |
+| QualityReview  | id, assetId, result, issues                  |
+| ExportRecord   | id, episodeId, settings, status              |
 
 关系：
 
@@ -206,12 +206,12 @@ Asset
 
 ### 5.1 Agent 职责
 
-| Agent | 输入 | 输出 |
-|---|---|---|
-| Writer Agent | 故事创意、已有剧本 | 结构化剧本 |
-| Storyboard Agent | 剧本、角色设定 | 分镜数据 |
-| Visual Agent | 分镜、角色参考 | 图片及视频提示词 |
-| Review Agent | 分镜要求、生成素材 | 结构化质量报告 |
+| Agent            | 输入               | 输出             |
+| ---------------- | ------------------ | ---------------- |
+| Writer Agent     | 故事创意、已有剧本 | 结构化剧本       |
+| Storyboard Agent | 剧本、角色设定     | 分镜数据         |
+| Visual Agent     | 分镜、角色参考     | 图片及视频提示词 |
+| Review Agent     | 分镜要求、生成素材 | 结构化质量报告   |
 
 ### 5.2 Agent 执行机制
 
@@ -335,17 +335,17 @@ Approve / Reject / Regenerate
 
 ### 8.1 REST API
 
-| 接口 | 用途 |
-|---|---|
-| `POST /projects` | 创建项目 |
-| `GET /projects/:id` | 获取项目详情 |
-| `POST /episodes` | 创建剧集 |
-| `POST /episodes/:id/scripts/generate` | 生成剧本 |
-| `POST /episodes/:id/storyboard/generate` | 生成分镜 |
-| `PATCH /shots/:id` | 编辑镜头 |
-| `POST /shots/:id/generations` | 创建生成任务 |
-| `GET /generations/:id` | 查询任务详情 |
-| `POST /shots/:id/approve` | 确认镜头素材 |
+| 接口                                     | 用途         |
+| ---------------------------------------- | ------------ |
+| `POST /projects`                         | 创建项目     |
+| `GET /projects/:id`                      | 获取项目详情 |
+| `POST /episodes`                         | 创建剧集     |
+| `POST /episodes/:id/scripts/generate`    | 生成剧本     |
+| `POST /episodes/:id/storyboard/generate` | 生成分镜     |
+| `PATCH /shots/:id`                       | 编辑镜头     |
+| `POST /shots/:id/generations`            | 创建生成任务 |
+| `GET /generations/:id`                   | 查询任务详情 |
+| `POST /shots/:id/approve`                | 确认镜头素材 |
 
 剧本、角色、场景和素材管理提供相应 CRUD 接口。
 
@@ -546,19 +546,19 @@ ai-drama/
 
 ## 13. MVP 验收标准
 
-| 验收项 | 通过条件 |
-|---|---|
-| 桌面应用 | Windows 安装包可正常启动 |
-| 项目管理 | 项目与剧集数据重启后保留 |
-| 剧本创作 | 能生成并人工修改结构化剧本 |
-| 角色管理 | 可保存及复用角色参考图 |
-| 分镜管理 | 可编辑、排序、保存分镜 |
-| 图片生成 | 可生成并选择首帧 |
-| 视频生成 | 可异步生成并查看结果 |
+| 验收项   | 通过条件                       |
+| -------- | ------------------------------ |
+| 桌面应用 | Windows 安装包可正常启动       |
+| 项目管理 | 项目与剧集数据重启后保留       |
+| 剧本创作 | 能生成并人工修改结构化剧本     |
+| 角色管理 | 可保存及复用角色参考图         |
+| 分镜管理 | 可编辑、排序、保存分镜         |
+| 图片生成 | 可生成并选择首帧               |
+| 视频生成 | 可异步生成并查看结果           |
 | 异常恢复 | 重启 Worker 后可恢复未完成任务 |
-| 质量审核 | 可查看质量报告并确认素材 |
+| 质量审核 | 可查看质量报告并确认素材       |
 | 成本控制 | 达到预算或次数上限时阻止新任务 |
-| 成片制作 | 可合成视频、语音及字幕 |
-| 视频导出 | 可导出正常播放的 MP4 |
+| 成片制作 | 可合成视频、语音及字幕         |
+| 视频导出 | 可导出正常播放的 MP4           |
 
 最终使用真实模型 API 完成一集 3～5 分钟真人 AI 短剧的制作与导出，并记录完整的生成费用和任务执行情况。

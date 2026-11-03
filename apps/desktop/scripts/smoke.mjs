@@ -26,7 +26,8 @@ try {
   const cspErrors = []
   page.on('pageerror', (error) => rendererErrors.push(error.message))
   page.on('console', (message) => {
-    if (/content security policy|violates.*directive/i.test(message.text())) cspErrors.push(message.text())
+    if (/content security policy|violates.*directive/i.test(message.text()))
+      cspErrors.push(message.text())
   })
   await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
   await page.reload()
@@ -54,29 +55,55 @@ try {
     nodeIntegration: false,
     preload: ''
   })
-  assert.deepEqual(await page.evaluate(() => ({
-    node: typeof globalThis.process,
-    require: typeof globalThis.require
-  })), { node: 'undefined', require: 'undefined' })
-  const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute('content')
+  assert.deepEqual(
+    await page.evaluate(() => ({
+      node: typeof globalThis.process,
+      require: typeof globalThis.require
+    })),
+    { node: 'undefined', require: 'undefined' }
+  )
+  const csp = await page
+    .locator('meta[http-equiv="Content-Security-Policy"]')
+    .getAttribute('content')
   assert.ok(csp?.includes("connect-src 'none'"))
-  assert.ok(!csp.includes('unsafe-') && !csp.includes('http:') && !csp.includes('ws:'))
+  assert.ok(
+    !csp.includes('unsafe-') && !csp.includes('http:') && !csp.includes('ws:')
+  )
 
   await page.evaluate(() => {
     const script = document.createElement('script')
     script.textContent = 'globalThis.inlineScriptExecuted = true'
     document.head.append(script)
   })
-  assert.equal(await page.evaluate(() => globalThis.inlineScriptExecuted), undefined)
-  assert.equal(await page.evaluate(() => window.open('about:blank') === null), true)
-  assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().length), 1)
+  assert.equal(
+    await page.evaluate(() => globalThis.inlineScriptExecuted),
+    undefined
+  )
+  assert.equal(
+    await page.evaluate(() => window.open('about:blank') === null),
+    true
+  )
+  assert.equal(
+    await app.evaluate(
+      ({ BrowserWindow }) => BrowserWindow.getAllWindows().length
+    ),
+    1
+  )
 
   for (const width of [1440, 1024, 390]) {
     await page.setViewportSize({ width, height: 760 })
-    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true)
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth
+      ),
+      true
+    )
   }
   await page.setViewportSize({ width: 1120, height: 760 })
-  assert.equal(await page.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(241, 244, 247)')
+  assert.equal(
+    await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
+    'rgb(241, 244, 247)'
+  )
   const screenshot = join(appDirectory, 'out/smoke.png')
   await page.screenshot({ path: screenshot, fullPage: true })
   assert.deepEqual(rendererErrors, [])
@@ -85,17 +112,32 @@ try {
   await app.evaluate(({ BrowserWindow }) => {
     globalThis.smokeNavigationBlocked = new Promise((resolve) => {
       const timer = setTimeout(() => resolve(false), 5_000)
-      BrowserWindow.getAllWindows()[0].webContents.once('will-frame-navigate', (event) => {
-        clearTimeout(timer)
-        resolve(event.defaultPrevented)
-      })
+      BrowserWindow.getAllWindows()[0].webContents.once(
+        'will-frame-navigate',
+        (event) => {
+          clearTimeout(timer)
+          resolve(event.defaultPrevented)
+        }
+      )
     })
   })
-  await page.evaluate(() => { location.href = 'http://127.0.0.1:5180/blocked-smoke' })
-  assert.equal(await app.evaluate(() => globalThis.smokeNavigationBlocked), true)
-  assert.equal(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].webContents.getURL()), initialUrl)
+  await page.evaluate(() => {
+    location.href = 'http://127.0.0.1:5180/blocked-smoke'
+  })
+  assert.equal(
+    await app.evaluate(() => globalThis.smokeNavigationBlocked),
+    true
+  )
+  assert.equal(
+    await app.evaluate(({ BrowserWindow }) =>
+      BrowserWindow.getAllWindows()[0].webContents.getURL()
+    ),
+    initialUrl
+  )
 
-  console.log(`PASS: real Electron renderer, sandbox, CSP, navigation and popup restrictions; screenshot: ${screenshot}`)
+  console.log(
+    `PASS: real Electron renderer, sandbox, CSP, navigation and popup restrictions; screenshot: ${screenshot}`
+  )
 } finally {
   await app.close()
 }
