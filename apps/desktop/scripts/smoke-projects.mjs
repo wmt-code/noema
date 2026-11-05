@@ -111,11 +111,7 @@ test(
       assert.equal(await trigger.textContent(), option)
       const after = await trigger.boundingBox()
       assert.equal(before.width, after.width)
-      const group = await trigger.locator('.filter-select-label').boundingBox()
-      assert.ok(
-        Math.abs(group.x + group.width / 2 - (after.x + after.width / 2)) < 1,
-        'Text and arrow must be centered as a group'
-      )
+      assert.equal(await trigger.getAttribute('data-slot'), 'select-trigger')
     }
     async function menu(name, action) {
       await main()
@@ -145,7 +141,34 @@ test(
     )
     await chooseFilter('项目排序', '项目名称')
     await chooseFilter('项目排序', '最近更新')
+    const sortTrigger = main().getByRole('combobox', { name: '项目排序' })
+    await sortTrigger.focus()
+    await page.keyboard.press('ArrowDown')
+    await page.getByRole('option', { name: '最近更新', exact: true }).waitFor()
+    await page.waitForFunction(
+      () => document.activeElement?.getAttribute('role') === 'option'
+    )
+    await page.keyboard.press('End')
+    await page.waitForFunction(
+      () => document.activeElement?.textContent === '项目名称'
+    )
+    await page.keyboard.press('Enter')
+    await page.getByRole('listbox').waitFor({ state: 'hidden' })
+    assert.equal(await sortTrigger.textContent(), '项目名称')
+    assert.equal(
+      await sortTrigger.evaluate(
+        (element) => element === document.activeElement
+      ),
+      true
+    )
     await main().getByRole('combobox', { name: '项目排序' }).click()
+    await page
+      .locator('[data-slot="select-content"]')
+      .evaluate((element) =>
+        Promise.all(
+          element.getAnimations().map((animation) => animation.finished)
+        )
+      )
     await page.screenshot({ path: join(appDirectory, 'out/sort-menu.png') })
     await page.keyboard.press('Escape')
     const owner = await prisma.user.findUniqueOrThrow({ where: { email } })
@@ -248,14 +271,16 @@ test(
         .click()
       dialog = page.getByRole('dialog', { name: '新建剧集', exact: true })
       await dialog.getByLabel('剧集名称', { exact: true }).fill(title)
-      await dialog
-        .getByLabel('状态', { exact: true })
-        .selectOption({ label: status })
+      await dialog.getByRole('combobox', { name: '状态', exact: true }).click()
+      await page.getByRole('option', { name: status, exact: true }).click()
       await dialog
         .getByRole('button', { name: '创建剧集', exact: true })
         .click()
       await dialog.waitFor({ state: 'hidden' })
-      await row(title).getByText(status, { exact: true }).waitFor()
+      await row(title)
+        .getByText(status, { exact: true })
+        .filter({ visible: true })
+        .waitFor()
     }
     const episode = await prisma.episode.findFirstOrThrow({
       where: { projectId: project.id, title: firstTitle }
@@ -264,12 +289,14 @@ test(
     await menu(firstTitle, '编辑剧集')
     dialog = page.getByRole('dialog', { name: '编辑剧集', exact: true })
     await dialog.getByLabel('剧集名称', { exact: true }).fill(editedTitle)
-    await dialog
-      .getByLabel('状态', { exact: true })
-      .selectOption({ label: '已完成' })
+    await dialog.getByRole('combobox', { name: '状态', exact: true }).click()
+    await page.getByRole('option', { name: '已完成', exact: true }).click()
     await dialog.getByRole('button', { name: '保存', exact: true }).click()
     await dialog.waitFor({ state: 'hidden' })
-    await row(editedTitle).getByText('已完成', { exact: true }).waitFor()
+    await row(editedTitle)
+      .getByText('已完成', { exact: true })
+      .filter({ visible: true })
+      .waitFor()
     const updatedEpisode = await prisma.episode.findUniqueOrThrow({
       where: { id: episode.id }
     })
@@ -335,6 +362,11 @@ test(
     await navigationButton.click()
     const navigation = page.getByRole('dialog', { name: '工作台导航' })
     await navigation.waitFor()
+    await navigation.evaluate((element) =>
+      Promise.all(
+        element.getAnimations().map((animation) => animation.finished)
+      )
+    )
     assert.equal(
       await navigation.evaluate((el) => {
         const r = el.getBoundingClientRect()
@@ -391,7 +423,7 @@ test(
         })
       assert.equal(
         await page
-          .locator('.sidebar-projects')
+          .locator('[data-slot="sidebar-content"]')
           .evaluate((element) => element.scrollWidth <= element.clientWidth),
         true,
         'Recent projects must not scroll horizontally'
@@ -473,8 +505,14 @@ test(
     await main()
       .getByRole('heading', { name: renamedProject, exact: true })
       .waitFor()
-    await row(editedTitle).getByText('已完成', { exact: true }).waitFor()
-    await row(secondTitle).getByText('草稿', { exact: true }).waitFor()
+    await row(editedTitle)
+      .getByText('已完成', { exact: true })
+      .filter({ visible: true })
+      .waitFor()
+    await row(secondTitle)
+      .getByText('草稿', { exact: true })
+      .filter({ visible: true })
+      .waitFor()
     assert.deepEqual(await readFile(sessionFile), encrypted)
     assert.equal(await prisma.session.count({ where: { userId: owner.id } }), 1)
     assert.equal((await send('GET', '/auth/me', token)).status, 200)
@@ -492,26 +530,38 @@ test(
     )
 
     await menu(editedTitle, '删除剧集')
-    dialog = page.getByRole('dialog', { name: '确认删除剧集', exact: true })
+    dialog = page.getByRole('alertdialog', {
+      name: '确认删除剧集',
+      exact: true
+    })
     await dialog.getByRole('button', { name: '取消', exact: true }).click()
     await row(editedTitle).waitFor()
     assert.equal(await prisma.episode.count({ where: { id: episode.id } }), 1)
     await menu(editedTitle, '删除剧集')
-    dialog = page.getByRole('dialog', { name: '确认删除剧集', exact: true })
+    dialog = page.getByRole('alertdialog', {
+      name: '确认删除剧集',
+      exact: true
+    })
     await dialog.getByRole('button', { name: '删除', exact: true }).click()
     await dialog.waitFor({ state: 'hidden' })
     await row(editedTitle).waitFor({ state: 'detached' })
     assert.equal(await prisma.episode.count({ where: { id: episode.id } }), 0)
 
     await menu(renamedProject, '删除项目')
-    dialog = page.getByRole('dialog', { name: '确认删除项目', exact: true })
+    dialog = page.getByRole('alertdialog', {
+      name: '确认删除项目',
+      exact: true
+    })
     await dialog.getByRole('button', { name: '取消', exact: true }).click()
     await main()
       .getByRole('heading', { name: renamedProject, exact: true })
       .waitFor()
     assert.equal(await prisma.project.count({ where: { id: project.id } }), 1)
     await menu(renamedProject, '删除项目')
-    dialog = page.getByRole('dialog', { name: '确认删除项目', exact: true })
+    dialog = page.getByRole('alertdialog', {
+      name: '确认删除项目',
+      exact: true
+    })
     await dialog.getByRole('button', { name: '删除', exact: true }).click()
     await dialog.waitFor({ state: 'hidden' })
     await main()
