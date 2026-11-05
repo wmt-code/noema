@@ -10,7 +10,7 @@
 | 3    | ESLint、Prettier 及根目录检查命令                        | 两端统一检查通过                                | 已完成 |
 | 4    | Docker Compose 中的 PostgreSQL、Redis 与 Prisma 连接     | 服务健康，Prisma 可连接测试数据库               | 已完成 |
 | 5    | 核心数据模型与首个数据库迁移                             | 空库迁移通过，关系与约束可验证                  | 已完成 |
-| 6    | 基础认证与资源归属校验                                   | 登录、未认证访问、越权访问测试通过              | 待开发 |
+| 6    | 基础认证与资源归属校验                                   | 登录、未认证访问、越权访问测试通过              | 已完成 |
 | 7    | 项目与剧集管理 API 及共享 Schema                         | 创建、查询、修改、删除与持久化测试通过          | 待开发 |
 | 8    | Tailwind CSS、shadcn/ui、桌面工作台和项目管理页面        | 界面调用真实 API 创建项目、剧集，重启后数据保留 | 待开发 |
 
@@ -53,6 +53,13 @@
 - 删除项目级联清理剧集、剧本、场景、镜头、生成任务和导出记录；可复用素材及其审核保留，已删除任务的素材来源关联置空。被镜头引用的素材不能直接删除。
 - 新增根目录 `db:migrate`、`db:deploy`、`db:test` 入口，补齐根目录与服务端数据库使用说明；普通 `test` 仍无需数据库。
 - `db:validate`、`infra:check`、`db:check`、根目录 `check`、4 项 HTTP 测试、双端构建及 `install --frozen-lockfile` 全部通过。认证、资源归属 API 校验和项目管理接口按第六、七步继续实现。
+
+## 第六步验证记录
+
+- `POST /auth/register`、`POST /auth/login`、`GET /auth/me`、`POST /auth/logout` 已实现：scrypt 口令哈希（缺失用户同样推导，防时序探测）、服务端会话表存 SHA-256 令牌哈希、7 天过期，响应不泄露口令哈希并带 `Cache-Control: no-store`。
+- `AuthGuard` 全局生效，`/health` 与注册登录标记为公开路由；`OwnershipService.assertOwned` 以 SQL 过滤按归属链校验全部十类资源，资源不存在与越权同样返回 404，不信任请求体传入的归属标识。
+- `corepack pnpm db:test` 新增 `auth.integration.mjs` 5 项通过：注册校验与重复 409、登录成功与错误口令 401、缺失/畸形/未知令牌 401、注销后令牌失效与过期会话 401、越权访问 404 与非法 UUID 400；登录注册按 IP 限流。既有 7 项数据库检查不受影响。
+- 迁移 `20261103010000_auth_ownership` 在独立 schema 部署两次通过；`db:validate`、`db:check`、根目录 `check`、HTTP 测试与双端构建全部通过。
 
 ## 桌面端验证记录
 

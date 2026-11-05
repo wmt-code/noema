@@ -7,7 +7,7 @@
     "dev": "corepack pnpm db:generate && node --watch --watch-path=src --watch-path=tsconfig.json scripts/dev.mjs",
     "db:generate": "corepack pnpm --dir ../.. db:generate",
     "db:check": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/prisma.integration.mjs",
-    "db:test": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/models.integration.mjs",
+    "db:test": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/models.integration.mjs test/auth.integration.mjs",
     "typecheck": "corepack pnpm db:generate && tsc --noEmit",
     "build": "corepack pnpm db:generate && tsc",
     "start": "node --env-file-if-exists=../../.env dist/main.js",

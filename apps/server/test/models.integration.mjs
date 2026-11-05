@@ -1,54 +1,13 @@
 import assert from 'node:assert/strict'
-import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
-import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
 import { test } from 'node:test'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '../dist/generated/prisma/client.js'
-
-const root = fileURLToPath(new URL('../../../', import.meta.url))
-const require = createRequire(new URL('../../../package.json', import.meta.url))
-const prismaCli = require.resolve('prisma/build/index.js')
-
-function deploy(url) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [prismaCli, 'migrate', 'deploy'], {
-      cwd: root,
-      env: { ...process.env, DATABASE_URL: url },
-      stdio: ['ignore', 'pipe', 'pipe']
-    })
-    let output = ''
-    child.stdout.on('data', (chunk) => (output += chunk))
-    child.stderr.on('data', (chunk) => (output += chunk))
-    child.on('error', reject)
-    child.on('exit', (code) => {
-      if (code === 0) resolve(output)
-      else reject(new Error(`Migration failed (${code}): ${output}`))
-    })
-  })
-}
+import { deploy, testDatabase } from './database.mjs'
 
 test(
   'empty-schema migration, core relations and database constraints',
   { timeout: 60000 },
   async (t) => {
-    assert.ok(process.env.DATABASE_URL, 'DATABASE_URL is required')
-    const url = new URL(process.env.DATABASE_URL)
-    // Only this newly created schema is writable by the test, never public.
-    const schema = `models_test_${randomUUID().replaceAll('-', '')}`
-    url.searchParams.set('schema', schema)
-    const prisma = new PrismaClient({
-      adapter: new PrismaPg({ connectionString: url.toString() }, { schema })
-    })
-    await prisma.$executeRawUnsafe(`CREATE SCHEMA "${schema}"`)
-    t.after(async () => {
-      try {
-        await prisma.$executeRawUnsafe(`DROP SCHEMA "${schema}" CASCADE`)
-      } finally {
-        await prisma.$disconnect()
-      }
-    })
+    const { prisma, schema, url } = await testDatabase(t)
 
     await t.test(
       'migration deploys to an empty schema and can run twice',
@@ -64,13 +23,17 @@ test(
           `SELECT migration_name FROM "${schema}"."_prisma_migrations" WHERE finished_at IS NOT NULL`
         )
         assert.deepEqual(migrations, [
-          { migration_name: '20261103000000_init' }
+          { migration_name: '20261103000000_init' },
+          { migration_name: '20261103010000_auth_ownership' }
         ])
       }
     )
 
+    const owner = await prisma.user.create({
+      data: { email: 'models@example.com', passwordHash: 'test-only' }
+    })
     const project = await prisma.project.create({
-      data: { name: '数据库验证项目' }
+      data: { name: '数据库验证项目', ownerId: owner.id }
     })
     const episode = await prisma.episode.create({
       data: { projectId: project.id, title: '第一集' }
@@ -105,6 +68,7 @@ test(
     const asset = await prisma.asset.create({
       data: {
         type: 'VIDEO',
+        ownerId: owner.id,
         storageKey: 'test/shot/v1.mp4',
         generationTaskId: task.id
       }
@@ -112,6 +76,7 @@ test(
     const replacement = await prisma.asset.create({
       data: {
         type: 'VIDEO',
+        ownerId: owner.id,
         storageKey: 'test/shot/v2.mp4',
         generationTaskId: task.id
       }
@@ -195,7 +160,11 @@ test(
             }),
           () =>
             prisma.asset.create({
-              data: { type: 'VIDEO', storageKey: asset.storageKey }
+              data: {
+                type: 'VIDEO',
+                ownerId: owner.id,
+                storageKey: asset.storageKey
+              }
             }),
           () => prisma.generationTask.create({ data: taskData })
         ]) {
