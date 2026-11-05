@@ -1,5 +1,7 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { handleRequest, restoreSession } from './api'
 
 async function createWindow(): Promise<void> {
   const developmentUrl =
@@ -18,16 +20,18 @@ async function createWindow(): Promise<void> {
 
   const window = new BrowserWindow({
     title: 'Noema',
-    width: 1120,
-    height: 760,
+    width: 1280,
+    height: 820,
     minWidth: 390,
     minHeight: 400,
-    backgroundColor: '#f1f4f7',
+    backgroundColor: '#ffffff',
+    icon: join(import.meta.dirname, '../renderer/brand/icon-256.png'),
     autoHideMenuBar: true,
     webPreferences: {
       contextIsolation: true,
       sandbox: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      preload: join(import.meta.dirname, '../preload/index.cjs')
     }
   })
 
@@ -54,6 +58,24 @@ async function createWindow(): Promise<void> {
 app
   .whenReady()
   .then(async () => {
+    await restoreSession()
+    ipcMain.handle('noema:request', (event, request: unknown) => {
+      const window = BrowserWindow.fromWebContents(event.sender)
+      const frame = event.senderFrame
+      const expectedUrl =
+        process.env['NODE_ENV'] === 'development' && !app.isPackaged
+          ? new URL(process.env['ELECTRON_RENDERER_URL'] ?? '').href
+          : pathToFileURL(join(import.meta.dirname, '../renderer/index.html'))
+              .href
+      if (
+        !window ||
+        frame !== event.sender.mainFrame ||
+        frame?.url !== expectedUrl
+      ) {
+        return { ok: false, status: 403, message: '请求来源无效。' }
+      }
+      return handleRequest(request as Parameters<typeof handleRequest>[0])
+    })
     await createWindow()
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) {

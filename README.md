@@ -48,7 +48,7 @@ corepack pnpm infra:down
 
 `infra:down` 停止并移除本项目容器，保留数据卷。修改主机端口或数据库凭据时，同步修改 Compose 与 `.env`；已有 PostgreSQL 数据卷不会因修改环境变量而重建账号或改密。
 
-## 运行最小骨架
+## 运行应用
 
 完成 `.env` 配置后，在两个终端分别运行：
 
@@ -57,7 +57,7 @@ corepack pnpm dev:server
 corepack pnpm dev:desktop
 ```
 
-应用分别位于 `apps/server` 和 `apps/desktop`。启动方式与当前范围见[服务端说明](apps/server/README.md)和[桌面端说明](apps/desktop/README.md)。后端启动后可访问 <http://127.0.0.1:3000/health>；桌面启动页暂时独立运行。
+应用分别位于 `apps/server` 和 `apps/desktop`。启动方式与当前范围见[服务端说明](apps/server/README.md)和[桌面端说明](apps/desktop/README.md)。后端默认地址为 <http://127.0.0.1:3000>；桌面端连接该服务，提供注册登录、项目和剧集管理。
 
 ## 统一检查
 
@@ -88,11 +88,13 @@ ESLint 使用根目录 flat config，覆盖两端 TypeScript、React Hooks、配
 ```sh
 corepack pnpm --filter @noema/desktop smoke
 corepack pnpm --filter @noema/desktop smoke:dev
+# 需 PostgreSQL 和已构建的服务端；使用独立测试 schema。
+corepack pnpm --filter @noema/desktop smoke:projects
 ```
 
 桌面端启动检查需要可用的图形桌面；具体前置条件见桌面端 README。
 
-共享包按需放入 `packages/*`，当前已提供本地数据库、Redis 和 Prisma 连接，尚未接入认证或项目管理。
+共享包位于 `packages/shared`，项目与剧集写入复用同一份输入校验。认证、资源归属校验和项目管理 API 已接入桌面端。
 
 ## 分步开发
 

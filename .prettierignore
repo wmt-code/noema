@@ -8,3 +8,4 @@ apps/server/src/generated/
 .worktrees/
 .claude/
 pnpm-lock.yaml
+graphify-out/
