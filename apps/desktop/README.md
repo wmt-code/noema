@@ -1,27 +1,55 @@
 # Noema 桌面端
 
-阶段 2A：Electron + electron-vite + React + TypeScript 最小窗口，仅提供中文静态启动页。
+Electron + React + TypeScript 桌面工作台，使用 Tailwind CSS 4 和 shadcn/ui，支持注册登录、项目管理和剧集管理。
 
-## 环境与命令
+## 启动
 
-在仓库根目录使用 Node.js `>=24.14.1 <25` 和 pnpm `12.16.1`。未启用 pnpm 命令时可把下列 `pnpm` 替换为 `corepack pnpm`。
+Node.js `>=24.14.1 <25`，pnpm `12.16.1`。在仓库根目录准备 `.env`，启动基础设施并应用迁移：
 
 ```sh
-pnpm install
-pnpm --filter @noema/desktop dev
-pnpm --filter @noema/desktop typecheck
-pnpm --filter @noema/desktop build
-# 必须先 build；需要能运行 Electron 的桌面会话。
-pnpm --filter @noema/desktop smoke
-pnpm --filter @noema/desktop smoke:dev
+corepack pnpm install
+corepack pnpm infra:up
+corepack pnpm db:deploy
 ```
 
-依赖版本均固定于本应用的 `package.json`。应用源码使用严格类型检查；主进程配置的 `skipLibCheck` 只跳过第三方声明检查，避免 electron-vite 对未使用的可选 SWC 类型的直接引用。Electron 45 首次启动时按需下载本平台官方二进制，需能访问 GitHub Releases；该版本没有安装生命周期脚本，无需配置 pnpm `allowBuilds`。不需要下载 Playwright 浏览器。使用 HTTP(S) 代理时，下载器还需要环境变量 `ELECTRON_GET_USE_PROXY=1`。根锁文件由集成步骤统一更新。
+在两个终端分别运行：
 
-`dev` 只监听 `http://127.0.0.1:5180`，端口占用时直接失败。`build` 输出 `out/main` 与 `out/renderer`，并不生成安装包。`smoke` 用已安装的 Electron 启动构建产物，检查真实中文渲染、隔离与沙箱设置、无 Node 访问、生产 CSP、弹窗和导航限制、窄屏溢出；保存 `out/smoke.png` 后关闭应用。`smoke:dev` 同样需要先构建，验证真实开发窗口、CSP、HMR 消息、整页刷新及其他导航拦截，结束后关闭窗口和测试 Vite 服务。无图形桌面的环境需另行配置显示服务；脚本不会关闭沙箱来绕过环境限制。
+```sh
+corepack pnpm dev:server
+corepack pnpm dev:desktop
+```
 
-## 安全与范围
+桌面端默认连接 `http://127.0.0.1:3000`。可在启动桌面端的终端中设置 `NOEMA_API_URL`，只接受 HTTPS origin 或 `http://127.0.0.1:<port>`。开发渲染地址固定为 `http://127.0.0.1:5180`，端口占用时直接失败。无需给服务端开启 CORS。
 
-启用 `contextIsolation`、`sandbox`，关闭 `nodeIntegration`，没有 preload 桥或 IPC。阻止页面发起的导航、重定向、新窗口和权限请求；开发模式仅允许主窗口刷新当前启动页，支持 Vite 整页重载。生产页面仅加载本地脚本和样式；开发 CSP 另行允许 Vite 注入的脚本、样式和固定回环地址的 HMR 连接，该放行不会进入构建产物。
+## 功能
 
-本步骤没有项目管理、服务端连接、文件系统接口、FFmpeg、Tailwind/shadcn、打包与自动更新；这些按后续步骤接入。当前界面固定浅色，保留原生窗口边框，无可用业务操作。
+- 注册、登录、退出登录和会话恢复；密码至少 12 个字符，不超过 128 个 UTF-8 字节。
+- 项目创建、搜索、排序、重命名和删除。
+- 剧集创建、搜索、按状态筛选、编辑名称与状态、删除。
+- 删除前确认；请求失败保留表单内容，列表支持刷新重试。
+
+项目和剧集保存在服务端 PostgreSQL。会话令牌仅在主进程使用，通过 Electron `safeStorage` 加密后保存在用户数据目录，与服务端地址绑定；系统不支持加密时仅在本次进程中保留。退出登录会注销服务端会话并删除本地凭据。更换服务端地址需要重新登录。
+
+## 检查
+
+```sh
+corepack pnpm --filter @noema/desktop typecheck
+corepack pnpm build
+corepack pnpm --filter @noema/desktop smoke
+corepack pnpm --filter @noema/desktop smoke:dev
+corepack pnpm --filter @noema/desktop smoke:projects
+```
+
+`build` 输出 `out/main`、`out/preload`、`out/renderer`，不生成安装包。三个 smoke 命令需要已构建的桌面应用和可运行 Electron 的图形桌面。`smoke:projects` 还需要根目录 `.env`、已构建的服务端和可连接的 PostgreSQL；测试自动创建独立 schema、临时用户数据目录和服务端，结束后清理，不写入开发业务数据。
+
+- `smoke`：生产窗口、注册登录切换、沙箱、IPC 桥、CSP、弹窗与导航限制、窄屏溢出，截图 `out/smoke.png`。
+- `smoke:dev`：开发窗口、IPC、CSP、HMR 消息与整页刷新。
+- `smoke:projects`：真实界面完成项目与剧集增删改查、状态筛选、服务错误、重启持久化和退出登录，截图 `out/projects.png`。
+
+Electron 45 首次启动会下载本平台官方运行时。使用 HTTP(S) 代理时设置 `ELECTRON_GET_USE_PROXY=1`。测试复用 Electron 内置 Chromium，无需另行下载浏览器，也不会关闭沙箱。
+
+## 桌面边界
+
+保留原生窗口边框，启用 `contextIsolation` 和 `sandbox`，关闭 `nodeIntegration`。Preload 只暴露固定业务请求；主进程校验请求来源、资源 ID 和共享输入 Schema，不暴露任意 URL、文件路径或 IPC 通道。
+
+生产渲染页禁止直接联网，脚本只加载本地资源；样式允许本地文件和 Radix 滚动锁、弹窗及菜单所需的动态内联样式。开发环境额外允许 Vite 脚本和固定回环地址的 HMR 连接。阻止页面导航、重定向、新窗口和权限请求。

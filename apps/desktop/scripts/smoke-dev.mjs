@@ -1,5 +1,7 @@
 // Run build first. Verifies the real development renderer without a second browser download.
 import assert from 'node:assert/strict'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import electronPath from 'electron'
 import { resolveConfig } from 'electron-vite'
@@ -9,6 +11,7 @@ import { _electron as electron } from 'playwright-core'
 const appDirectory = resolve(import.meta.dirname, '..')
 const config = await resolveConfig({ root: appDirectory }, 'serve')
 const server = await createServer(config.config.renderer)
+const userData = await mkdtemp(resolve(tmpdir(), 'noema-dev-smoke-'))
 let app
 try {
   await server.listen()
@@ -20,7 +23,7 @@ try {
   delete environment.ELECTRON_RUN_AS_NODE
   app = await electron.launch({
     executablePath: electronPath,
-    args: [appDirectory],
+    args: [appDirectory, `--user-data-dir=${userData}`],
     cwd: appDirectory,
     env: environment,
     timeout: 30_000
@@ -33,9 +36,9 @@ try {
     if (/content security policy|violates.*directive/i.test(message.text()))
       errors.push(message.text())
   })
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
   await page.reload()
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
   assert.equal(new URL(page.url()).origin, 'http://127.0.0.1:5180')
   await page.evaluate(async () => {
     const { createHotContext } = await import('/@vite/client')
@@ -48,7 +51,13 @@ try {
   const reloaded = page.waitForEvent('domcontentloaded')
   server.ws.send({ type: 'full-reload' })
   await reloaded
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
+  assert.equal(
+    await page
+      .locator('.auth-art')
+      .evaluate((image) => image.complete && image.naturalWidth > 0),
+    true
+  )
   assert.deepEqual(errors, [])
 
   const initialUrl = page.url()
@@ -83,4 +92,10 @@ try {
 } finally {
   if (app) await app.close()
   await server.close()
+  await rm(userData, {
+    recursive: true,
+    force: true,
+    maxRetries: 5,
+    retryDelay: 200
+  })
 }

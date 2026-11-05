@@ -1,6 +1,7 @@
 // Run build first. Uses the installed Electron binary; no browser download required.
 import assert from 'node:assert/strict'
-import { access } from 'node:fs/promises'
+import { access, mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import electronPath from 'electron'
 import { _electron as electron } from 'playwright-core'
@@ -11,9 +12,10 @@ const environment = { ...process.env, NODE_ENV: 'production' }
 delete environment['ELECTRON_RUN_AS_NODE']
 delete environment['ELECTRON_RENDERER_URL']
 
+const userData = await mkdtemp(join(tmpdir(), 'noema-smoke-'))
 const app = await electron.launch({
   executablePath: electronPath,
-  args: [appDirectory],
+  args: [appDirectory, `--user-data-dir=${userData}`],
   cwd: appDirectory,
   env: environment,
   timeout: 30_000
@@ -29,9 +31,29 @@ try {
     if (/content security policy|violates.*directive/i.test(message.text()))
       cspErrors.push(message.text())
   })
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
   await page.reload()
-  await page.getByRole('heading', { name: '个人短剧创作工具' }).waitFor()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
+  await page.getByRole('button', { name: '注册账号', exact: true }).click()
+  await page.getByRole('heading', { name: '注册 Noema' }).waitFor()
+  await page.getByRole('button', { name: '返回登录' }).click()
+  await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
+  assert.equal(
+    await page
+      .locator('.auth-art')
+      .evaluate((image) => image.complete && image.naturalWidth > 0),
+    true
+  )
+  assert.equal(
+    await page
+      .locator('.brand-mark')
+      .evaluate((image) => image.complete && image.naturalWidth > 0),
+    true
+  )
+  assert.equal(
+    await page.locator('link[rel="icon"]').getAttribute('href'),
+    './brand/favicon.ico'
+  )
   assert.deepEqual(cspErrors, [])
   assert.equal(await page.title(), 'Noema')
   assert.equal(new URL(page.url()).protocol, 'file:')
@@ -44,30 +66,33 @@ try {
       visible: window.isVisible(),
       contextIsolation: preferences.contextIsolation,
       sandbox: preferences.sandbox,
-      nodeIntegration: preferences.nodeIntegration,
-      preload: preferences.preload ?? ''
+      nodeIntegration: preferences.nodeIntegration
     }
   })
   assert.deepEqual(security, {
     visible: true,
     contextIsolation: true,
     sandbox: true,
-    nodeIntegration: false,
-    preload: ''
+    nodeIntegration: false
   })
   assert.deepEqual(
     await page.evaluate(() => ({
       node: typeof globalThis.process,
-      require: typeof globalThis.require
+      require: typeof globalThis.require,
+      bridge: typeof window.noema?.request
     })),
-    { node: 'undefined', require: 'undefined' }
+    { node: 'undefined', require: 'undefined', bridge: 'function' }
   )
   const csp = await page
     .locator('meta[http-equiv="Content-Security-Policy"]')
     .getAttribute('content')
   assert.ok(csp?.includes("connect-src 'none'"))
   assert.ok(
-    !csp.includes('unsafe-') && !csp.includes('http:') && !csp.includes('ws:')
+    !csp.includes('unsafe-eval') &&
+      !csp.includes('http:') &&
+      !csp.includes('ws:') &&
+      csp.includes("script-src 'self';") &&
+      csp.includes("style-src 'self' 'unsafe-inline';")
   )
 
   await page.evaluate(() => {
@@ -99,10 +124,30 @@ try {
       true
     )
   }
+  for (const [width, height] of [
+    [1440, 1024],
+    [1487, 1058],
+    [1280, 820],
+    [390, 820],
+    [1024, 400]
+  ]) {
+    await page.setViewportSize({ width, height })
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth
+      ),
+      true
+    )
+    assert.equal(await page.locator('.auth-art').isVisible(), width >= 768)
+    await page.screenshot({
+      path: join(appDirectory, `out/login-${width}-${height}.png`),
+      fullPage: true
+    })
+  }
   await page.setViewportSize({ width: 1120, height: 760 })
   assert.equal(
     await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
-    'rgb(241, 244, 247)'
+    'rgb(255, 255, 255)'
   )
   const screenshot = join(appDirectory, 'out/smoke.png')
   await page.screenshot({ path: screenshot, fullPage: true })
@@ -140,4 +185,10 @@ try {
   )
 } finally {
   await app.close()
+  await rm(userData, {
+    recursive: true,
+    force: true,
+    maxRetries: 5,
+    retryDelay: 200
+  })
 }

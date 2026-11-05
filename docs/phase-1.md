@@ -12,7 +12,7 @@
 | 5    | 核心数据模型与首个数据库迁移                             | 空库迁移通过，关系与约束可验证                  | 已完成 |
 | 6    | 基础认证与资源归属校验                                   | 登录、未认证访问、越权访问测试通过              | 已完成 |
 | 7    | 项目与剧集管理 API 及共享 Schema                         | 创建、查询、修改、删除与持久化测试通过          | 已完成 |
-| 8    | Tailwind CSS、shadcn/ui、桌面工作台和项目管理页面        | 界面调用真实 API 创建项目、剧集，重启后数据保留 | 待开发 |
+| 8    | Tailwind CSS、shadcn/ui、桌面工作台和项目管理页面        | 界面调用真实 API 创建项目、剧集，重启后数据保留 | 已完成 |
 
 ## 并行规则
 
@@ -21,12 +21,11 @@
 - 并行任务限定在各自应用目录，根目录配置与锁文件由集成时统一处理。
 - 其余步骤按依赖推进，不为后续阶段预建 Agent、Worker 或模型调用实现。
 
-## 最小骨架的范围
+## 当前应用范围
 
-- 桌面端仅包含安全的 Electron 窗口与 React 启动页，暂不调用服务端。
-- 后端仅提供进程存活检查；`GET /health` 不代表数据库、Redis 或模型服务可用。
-- 根目录提供 `dev:desktop` 和 `dev:server` 入口。每端的类型检查、构建和测试命令见各自 README。
-- 两端应用代码分别提交，依赖锁文件与公共启动文档单独集成。
+- 桌面端包含 Tailwind CSS 4、shadcn/ui、登录注册、项目和剧集管理工作台，通过受限 preload 调用真实服务端。
+- 后端提供认证、资源归属和项目/剧集 API；`GET /health` 仅检查进程存活。
+- 根目录提供 `dev:desktop` 和 `dev:server` 入口。两端启动与检查命令见各自 README。
 
 ## 第三步验证记录
 
@@ -69,13 +68,22 @@
 - `corepack pnpm db:test` 新增 `project.integration.mjs` 5 项通过：项目输入校验、项目 CRUD 与列表排序、剧集 CRUD 与状态枚举校验、跨用户访问 404、删除级联与未删除数据持久化；集成测试公共的建库与应用启动逻辑提取为 `database.mjs` 的 `testApp`。全部 19 项通过。
 - `db:validate`、`infra:check`、`db:check`、根目录 `check`、`build`、`test`、4 项 HTTP 测试及 `install --frozen-lockfile` 全部通过。
 
+## 第八步验证记录
+
+- 接入 Tailwind CSS 4、shadcn/ui 基础组件与 Lucide 图标，补齐组件配置、路径别名和共享包构建依赖；工作台支持项目搜索、排序、创建、重命名和删除，剧集支持搜索、状态筛选、创建、名称/状态编辑和删除。
+- 新增登录、注册、退出登录与会话恢复；令牌由 Electron 主进程通过 `safeStorage` 加密保存并绑定 API origin，不向渲染进程返回令牌。受限 preload 只提供固定业务操作，校验 IPC 来源、资源 ID 和共享输入 Schema。
+- 保持沙箱、上下文隔离、无 Node 访问、导航/弹窗/权限拦截与生产页面禁止直接联网；仅为 Radix 动态样式允许内联 CSS，生产脚本仍只接受本地文件。
+- `smoke:projects` 使用真实 Electron、NestJS 与独立 PostgreSQL schema，完成注册、项目/剧集 CRUD、搜索与状态筛选、取消删除、服务中断时保存失败、服务端与桌面端同时重启后的数据及会话恢复、级联删除和注销失效；校验令牌密文、服务端哈希和渲染/CSP 错误，结束后清理测试数据。
+- 已查看 `out/smoke.png`、`out/project-list.png`、`out/projects.png` 和 `out/projects-narrow.png`；登录、工作台和 390px 窄窗口无横向溢出。最近项目区独立纵向滚动，账号区固定，真实窗口高度 760/600/400px 且包含 5 个最近项目时退出按钮完整可见。界面只保留操作、状态与必要错误提示。
+- 根目录 `check`、`build`、4 项 HTTP 测试、19 项数据库集成检查、桌面端三项 smoke 及 `install --frozen-lockfile` 全部通过。
+
 ## 桌面端验证记录
 
 - `typecheck`、`build` 通过，包含主进程和 React 渲染入口。
 - Electron 45 官方运行时已下载，真实生产窗口、中文渲染、沙箱与隔离、无 Node 访问、CSP、导航与弹窗限制均已验证。
 - `corepack pnpm --filter @noema/desktop smoke` 通过，截图已查看，保存到被 Git 忽略的 `apps/desktop/out/smoke.png`；检查前需先执行 `build`。
 - `corepack pnpm --filter @noema/desktop smoke:dev` 通过，验证开发窗口、CSP、HMR 消息、整页刷新与其他导航拦截。开发地址固定为 `http://127.0.0.1:5180`，避开本机其他项目占用的 5173。
-- 当前没有 preload 桥，因此 electron-vite 构建会提示 `preload config is missing`；后续需要本地能力时再新增。
+- 已接入受限 preload 桥，构建产物为 `out/preload/index.cjs`，生产与开发 smoke 都检查业务桥可用。
 
 ## 后端验证记录
 
