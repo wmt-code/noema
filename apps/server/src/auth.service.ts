@@ -53,7 +53,6 @@ const dummyHash = `scrypt-v1$${'00'.repeat(16)}$${'00'.repeat(64)}`
 
 @Injectable()
 export class AuthService {
-  // ponytail: per-process throttle; use Redis when running multiple server instances.
   private readonly attempts = new Map<
     string,
     { count: number; until: number }
