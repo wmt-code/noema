@@ -2,12 +2,9 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import {
   ArrowLeft,
   Check,
-  ChevronRight,
   Film,
   FolderClosed,
   FolderOpen,
-  Menu,
-  LoaderCircle,
   LogOut,
   MoreHorizontal,
   Pencil,
@@ -20,20 +17,90 @@ import { EPISODE_STATUSES, type EpisodeStatus } from '@noema/shared'
 import type { Episode, Project, User } from '../../shared/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { FilterSelect } from '@/components/ui/filter-select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction
+} from '@/components/ui/alert-dialog'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator
+} from '@/components/ui/breadcrumb'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
-  DialogTrigger
+  DialogHeader,
+  DialogFooter
 } from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent
+} from '@/components/ui/empty'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from '@/components/ui/input-group'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem
+} from '@/components/ui/select'
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarFooter,
+  SidebarSeparator,
+  SidebarInset,
+  SidebarTrigger,
+  useSidebar
+} from '@/components/ui/sidebar'
+import { Spinner } from '@/components/ui/spinner'
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from '@/components/ui/table'
 import { ApiError, request } from '@/lib/api'
 
 const statuses: Record<EpisodeStatus, string> = {
@@ -65,22 +132,6 @@ function Brand() {
   )
 }
 
-function ErrorNotice({ text, retry }: { text: string; retry?: () => void }) {
-  return (
-    <div
-      role="alert"
-      className="flex items-center justify-between gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive"
-    >
-      <span>{text}</span>
-      {retry && (
-        <Button variant="ghost" size="sm" onClick={retry}>
-          重试
-        </Button>
-      )}
-    </div>
-  )
-}
-
 export function App() {
   const [user, setUser] = useState<User | null>()
   const [bootError, setBootError] = useState('')
@@ -101,28 +152,36 @@ export function App() {
       active = false
     }
   }, [attempt])
-
   if (user === undefined)
     return (
       <main className="flex min-h-screen items-center justify-center p-6">
         {bootError ? (
-          <ErrorNotice
-            text={bootError}
-            retry={() => {
-              setBootError('')
-              setAttempt((value) => value + 1)
-            }}
-          />
+          <Alert variant="destructive" className="max-w-md">
+            <AlertDescription>
+              {bootError}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setBootError('')
+                  setAttempt((value) => value + 1)
+                }}
+              >
+                重试
+              </Button>
+            </AlertDescription>
+          </Alert>
         ) : (
-          <LoaderCircle
-            aria-label="正在打开工作台"
-            className="size-6 animate-spin text-primary"
-          />
+          <Spinner aria-label="正在打开工作台" />
         )}
       </main>
     )
   if (!user) return <Auth onLogin={setUser} />
-  return <Workspace user={user} onLogout={() => setUser(null)} />
+  return (
+    <SidebarProvider>
+      <Workspace user={user} onLogout={() => setUser(null)} />
+    </SidebarProvider>
+  )
 }
 
 function Auth({ onLogin }: { onLogin: (user: User) => void }) {
@@ -171,55 +230,60 @@ function Auth({ onLogin }: { onLogin: (user: User) => void }) {
       </aside>
       <main className="auth-main">
         <div className="auth-form">
-          <h1 className="text-[28px] font-semibold tracking-tight">
+          <h1 className="text-3xl font-semibold tracking-tight">
             {register ? '注册 Noema' : '登录 Noema'}
           </h1>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          <p className="mt-3 text-sm text-muted-foreground">
             {register
               ? '创建账号，建立你的第一个短剧项目。'
               : '登录后，继续管理你的项目与剧集。'}
           </p>
-          <form
-            className="mt-9 grid gap-5"
-            onSubmit={(event) => void submit(event)}
-          >
-            <label className="field" htmlFor="email">
-              邮箱
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                maxLength={254}
-                required
-                placeholder="you@example.com"
-                disabled={busy}
-              />
-            </label>
-            <label className="field" htmlFor="password">
-              密码
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete={register ? 'new-password' : 'current-password'}
-                minLength={12}
-                maxLength={128}
-                required
-                placeholder={register ? '至少 12 个字符' : '输入密码'}
-                disabled={busy}
-              />
-            </label>
-            {error && <ErrorNotice text={error} />}
-            <Button type="submit" className="mt-1 h-11 w-full" disabled={busy}>
-              {busy && <LoaderCircle className="animate-spin" />}
-              {register ? '注册并登录' : '登录'}
-            </Button>
+          <form className="mt-8" onSubmit={(event) => void submit(event)}>
+            <FieldGroup>
+              <Field data-disabled={busy}>
+                <FieldLabel htmlFor="email">邮箱</FieldLabel>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  maxLength={254}
+                  required
+                  placeholder="you@example.com"
+                  disabled={busy}
+                />
+              </Field>
+              <Field data-disabled={busy}>
+                <FieldLabel htmlFor="password">密码</FieldLabel>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete={register ? 'new-password' : 'current-password'}
+                  minLength={12}
+                  maxLength={128}
+                  required
+                  placeholder={register ? '至少 12 个字符' : '输入密码'}
+                  disabled={busy}
+                />
+              </Field>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              <Field>
+                <Button type="submit" disabled={busy}>
+                  {busy && <Spinner data-icon="inline-start" />}
+                  {register ? '注册并登录' : '登录'}
+                </Button>
+              </Field>
+            </FieldGroup>
           </form>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 flex items-center justify-center gap-1 text-sm text-muted-foreground">
             {register ? '已有账号？' : '还没有账号？'}
-            <button
-              className="ml-1 rounded-sm font-medium text-primary focus-visible:outline-2"
+            <Button
+              variant="link"
               disabled={busy}
               onClick={() => {
                 setRegister(!register)
@@ -227,7 +291,7 @@ function Auth({ onLogin }: { onLogin: (user: User) => void }) {
               }}
             >
               {register ? '返回登录' : '注册账号'}
-            </button>
+            </Button>
           </p>
         </div>
       </main>
@@ -260,16 +324,10 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [formError, setFormError] = useState('')
   const [busy, setBusy] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
-  const [navigationOpen, setNavigationOpen] = useState(false)
-
+  const { setOpenMobile, isMobile } = useSidebar()
   useEffect(() => {
-    const desktop = window.matchMedia('(min-width: 768px)')
-    const closeOnDesktop = () => {
-      if (desktop.matches) setNavigationOpen(false)
-    }
-    desktop.addEventListener('change', closeOnDesktop)
-    return () => desktop.removeEventListener('change', closeOnDesktop)
-  }, [])
+    if (!isMobile) setOpenMobile(false)
+  }, [isMobile, setOpenMobile])
   const project = projects.find((item) => item.id === projectId)
 
   const handleError = useCallback(
@@ -318,7 +376,7 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   }, [projectId, episodeRefresh, handleError])
 
   function selectProject(id: string | null) {
-    setNavigationOpen(false)
+    setOpenMobile(false)
     if (id === projectId) return
     setProjectId(id)
     setEpisodes(null)
@@ -480,148 +538,152 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
             <MoreHorizontal />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem
-            onSelect={() =>
-              openEditor({ mode: 'rename-project', project: item })
-            }
-          >
-            <Pencil />
-            重命名
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="text-destructive"
-            onSelect={() =>
-              openEditor({ mode: 'delete-project', project: item })
-            }
-          >
-            <Trash2 />
-            删除项目
-          </DropdownMenuItem>
+        <DropdownMenuContent align="end">
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onSelect={() =>
+                openEditor({ mode: 'rename-project', project: item })
+              }
+            >
+              <Pencil />
+              重命名
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() =>
+                openEditor({ mode: 'delete-project', project: item })
+              }
+            >
+              <Trash2 />
+              删除项目
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     )
   }
 
-  const navigation = (
-    <>
-      <div className="shrink-0 px-3">
-        <Brand />
-      </div>
-      <nav aria-label="工作台导航" className="mt-10 shrink-0">
-        <button
-          className="sidebar-nav"
-          data-active={!projectId}
-          onClick={() => selectProject(null)}
-        >
-          <FolderClosed size={20} />
-          项目
-        </button>
-      </nav>
-      <div className="sidebar-projects">
-        <p className="sidebar-recent">最近项目</p>
-        <div className="grid gap-1">
-          {[...projects]
-            .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-            .slice(0, 5)
-            .map((item) => (
-              <button
-                key={item.id}
-                className="sidebar-project"
-                data-active={item.id === projectId}
-                onClick={() => selectProject(item.id)}
-              >
-                <FolderClosed size={15} className="shrink-0 opacity-60" />
-                <span className="min-w-0 truncate text-[13px]">
-                  {item.name}
-                </span>
-              </button>
-            ))}
-        </div>
-      </div>
-      <div className="shrink-0 border-t border-border pt-5">
-        <div className="flex min-w-0 items-center gap-3 px-2">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-sm text-foreground">
-            {user.email[0]?.toUpperCase()}
-          </span>
-          <span className="min-w-0 truncate text-xs" title={user.email}>
-            {user.email}
-          </span>
-        </div>
-        <Button
-          variant="ghost"
-          className="mt-3 h-10 w-full justify-start px-3 text-[13px] leading-5"
-          disabled={loggingOut}
-          onClick={() => void logout()}
-        >
-          <LogOut className="shrink-0" />
-          <span className="whitespace-nowrap">退出登录</span>
-        </Button>
-      </div>
-    </>
-  )
-
   return (
-    <div className="app-shell">
-      <aside className="sidebar desktop-sidebar">{navigation}</aside>
-      <div className="min-w-0">
-        <header className="workspace-header">
-          <Dialog open={navigationOpen} onOpenChange={setNavigationOpen}>
-            <DialogTrigger asChild>
-              <Button
-                className="mobile-navigation"
-                variant="ghost"
-                size="icon"
-                aria-label="打开导航"
+    <>
+      <Sidebar>
+        <SidebarHeader className="p-4">
+          <Brand />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={!projectId}
+                    onClick={() => selectProject(null)}
+                  >
+                    <FolderClosed />
+                    <span>项目</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupLabel>最近项目</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {[...projects]
+                  .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+                  .slice(0, 5)
+                  .map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        isActive={item.id === projectId}
+                        onClick={() => selectProject(item.id)}
+                        title={item.name}
+                      >
+                        <FolderClosed />
+                        <span>{item.name}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarSeparator />
+        <SidebarFooter>
+          <div className="flex min-w-0 items-center gap-3 p-2">
+            <Avatar>
+              <AvatarFallback>{user.email[0]?.toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <span className="min-w-0 truncate text-sm" title={user.email}>
+              {user.email}
+            </span>
+          </div>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                disabled={loggingOut}
+                onClick={() => void logout()}
               >
-                <Menu />
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              side="left"
-              className="navigation-drawer"
-              aria-describedby={undefined}
-            >
-              <DialogTitle className="sr-only">工作台导航</DialogTitle>
-              <div className="sidebar">{navigation}</div>
-            </DialogContent>
-          </Dialog>
-
-          <span className="text-xs">工作台</span>
-          <ChevronRight size={13} />
-          <button
-            className="text-xs hover:text-primary"
-            onClick={() => selectProject(null)}
-          >
-            项目
-          </button>
-          {project && (
-            <>
-              <ChevronRight size={13} />
-              <span className="truncate text-xs text-foreground">
-                {project.name}
-              </span>
-            </>
-          )}
+                <LogOut />
+                <span>退出登录</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset className="min-w-0">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b px-4 md:px-8">
+          <SidebarTrigger aria-label="打开导航" />
+          <Breadcrumb className="min-w-0">
+            <BreadcrumbList className="flex-nowrap">
+              <BreadcrumbItem className="shrink-0">工作台</BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem className="shrink-0">
+                {project ? (
+                  <BreadcrumbLink asChild>
+                    <Button variant="link" onClick={() => selectProject(null)}>
+                      项目
+                    </Button>
+                  </BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage>项目</BreadcrumbPage>
+                )}
+              </BreadcrumbItem>
+              {project && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem className="min-w-0">
+                    <BreadcrumbPage className="truncate">
+                      {project.name}
+                    </BreadcrumbPage>
+                  </BreadcrumbItem>
+                </>
+              )}
+            </BreadcrumbList>
+          </Breadcrumb>
         </header>
-        <main className="workspace-content">
+        <div className="mx-auto w-full max-w-[1600px] p-4 md:p-8">
           {error && (
-            <div className="mb-6">
-              <ErrorNotice text={error} />
-            </div>
+            <Alert variant="destructive" className="mb-6">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
-          <div className="workspace-heading">
+          <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
               {project && (
-                <button
-                  className="mb-3 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mb-3"
                   onClick={() => selectProject(null)}
                 >
-                  <ArrowLeft size={13} />
+                  <ArrowLeft data-icon="inline-start" />
                   所有项目
-                </button>
+                </Button>
               )}
-              <h1>{project ? project.name : '我的项目'}</h1>
+              <h1 className="text-3xl font-semibold wrap-anywhere">
+                {project ? project.name : '我的项目'}
+              </h1>
             </div>
             <div className="flex shrink-0 items-center gap-2">
               {project && projectMenu(project)}
@@ -637,58 +699,67 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
                   })
                 }
               >
-                <Plus />
+                <Plus data-icon="inline-start" />
                 {project ? '新建剧集' : '新建项目'}
               </Button>
             </div>
           </div>
-          <div className="workspace-toolbar">
-            <div className="workspace-search">
-              <Search className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
-              <Input
+          <div className="flex flex-wrap items-center gap-3">
+            <InputGroup className="mr-auto w-full md:max-w-sm">
+              <InputGroupInput
                 aria-label={project ? '搜索剧集' : '搜索项目'}
-                className="bg-white pl-9"
                 placeholder={project ? '搜索剧集' : '搜索项目'}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
               />
-            </div>
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+            </InputGroup>
             {project ? (
-              <FilterSelect
-                label="筛选状态"
-                value={filter}
-                onValueChange={setFilter}
-                options={[
-                  { value: 'ALL', label: '全部状态' },
-                  ...EPISODE_STATUSES.map((value) => ({
-                    value,
-                    label: statuses[value]
-                  }))
-                ]}
-              />
+              <Select value={filter} onValueChange={setFilter}>
+                <SelectTrigger className="w-36" aria-label="筛选状态">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectGroup>
+                    <SelectItem value="ALL">全部状态</SelectItem>
+                    {EPISODE_STATUSES.map((value) => (
+                      <SelectItem key={value} value={value}>
+                        {statuses[value]}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             ) : (
-              <FilterSelect
-                label="项目排序"
-                value={sort}
-                onValueChange={setSort}
-                options={[
-                  { value: 'updated', label: '最近更新' },
-                  { value: 'name', label: '项目名称' }
-                ]}
-              />
+              <Select value={sort} onValueChange={setSort}>
+                <SelectTrigger className="w-36" aria-label="项目排序">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectGroup>
+                    <SelectItem value="updated">最近更新</SelectItem>
+                    <SelectItem value="name">项目名称</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             )}
             <Button
               variant="outline"
               size="icon"
-              className="h-10 w-10 bg-white"
               aria-label="刷新列表"
               disabled={project ? episodes === null && !episodeError : loading}
               onClick={project ? reloadEpisodes : reloadProjects}
             >
-              <RefreshCw className={loading ? 'animate-spin' : ''} />
+              {loading || (project && episodes === null && !episodeError) ? (
+                <Spinner />
+              ) : (
+                <RefreshCw />
+              )}
             </Button>
           </div>
-          <span className="collection-count" role="status">
+          <p className="my-6 text-sm text-muted-foreground" role="status">
             {project
               ? episodes === null
                 ? '剧集列表'
@@ -696,157 +767,261 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
               : loading
                 ? '项目列表'
                 : `${projects.length} 个项目`}
-          </span>
+          </p>
           {loading ? (
-            <Loading />
+            <div
+              className="flex min-h-64 items-center justify-center gap-2"
+              role="status"
+            >
+              <Spinner />
+              正在加载
+            </div>
           ) : loadError ? (
-            <ErrorNotice text={loadError} retry={reloadProjects} />
+            <Alert variant="destructive">
+              <AlertDescription>
+                {loadError}
+                <Button variant="outline" size="sm" onClick={reloadProjects}>
+                  重试
+                </Button>
+              </AlertDescription>
+            </Alert>
           ) : project ? (
             episodeError ? (
-              <ErrorNotice text={episodeError} retry={reloadEpisodes} />
+              <Alert variant="destructive">
+                <AlertDescription>
+                  {episodeError}
+                  <Button variant="outline" size="sm" onClick={reloadEpisodes}>
+                    重试
+                  </Button>
+                </AlertDescription>
+              </Alert>
             ) : episodes === null ? (
-              <Loading />
+              <div
+                className="flex min-h-64 items-center justify-center gap-2"
+                role="status"
+              >
+                <Spinner />
+                正在加载
+              </div>
             ) : visibleEpisodes.length ? (
-              <section aria-label="剧集列表" className="episode-list">
-                <div className="episode-columns" aria-hidden="true">
-                  <span>集序</span>
-                  <span>剧集名称</span>
-                  <span>状态</span>
-                  <span className="episode-date">最近更新</span>
-                  <span />
-                </div>
-                {visibleEpisodes.map((item) => (
-                  <div
-                    data-testid="episode-row"
-                    key={item.id}
-                    className="episode-row"
-                  >
-                    <span className="episode-number">
-                      {String(episodes.indexOf(item) + 1).padStart(2, '0')}
-                    </span>
-                    <button
-                      className="min-w-0 truncate text-left text-sm font-medium hover:text-primary"
-                      onClick={() =>
-                        openEditor({ mode: 'edit-episode', episode: item })
-                      }
-                    >
-                      {item.title}
-                    </button>
-                    <span
-                      className="episode-status status-badge"
-                      data-status={item.status}
-                    >
-                      {statuses[item.status]}
-                    </span>
-                    <span className="episode-date text-xs text-muted-foreground">
-                      {date(item.updatedAt)}
-                    </span>
-                    <div className="episode-actions">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+              <section aria-label="剧集列表">
+                <Table className="table-fixed">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12">集序</TableHead>
+                      <TableHead>剧集名称</TableHead>
+                      <TableHead className="hidden w-24 md:table-cell">
+                        状态
+                      </TableHead>
+                      <TableHead className="hidden w-28 lg:table-cell">
+                        最近更新
+                      </TableHead>
+                      <TableHead className="w-12">
+                        <span className="sr-only">操作</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {visibleEpisodes.map((item) => (
+                      <TableRow key={item.id} data-testid="episode-row">
+                        <TableCell>
+                          {String(episodes.indexOf(item) + 1).padStart(2, '0')}
+                        </TableCell>
+                        <TableCell className="whitespace-normal">
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`${item.title} 的操作`}
-                          >
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                          <DropdownMenuItem
-                            onSelect={() =>
+                            variant="link"
+                            className="max-w-full justify-start"
+                            title={item.title}
+                            onClick={() =>
                               openEditor({
                                 mode: 'edit-episode',
                                 episode: item
                               })
                             }
                           >
-                            <Pencil />
-                            编辑剧集
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onSelect={() =>
-                              openEditor({
-                                mode: 'delete-episode',
-                                episode: item
-                              })
+                            <span className="truncate">{item.title}</span>
+                          </Button>
+                          <div className="mt-1 md:hidden">
+                            <Badge
+                              variant={
+                                item.status === 'COMPLETED'
+                                  ? 'default'
+                                  : item.status === 'IN_PROGRESS'
+                                    ? 'outline'
+                                    : 'secondary'
+                              }
+                            >
+                              {statuses[item.status]}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge
+                            variant={
+                              item.status === 'COMPLETED'
+                                ? 'default'
+                                : item.status === 'IN_PROGRESS'
+                                  ? 'outline'
+                                  : 'secondary'
                             }
                           >
-                            <Trash2 />
-                            删除剧集
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-                ))}
+                            {statuses[item.status]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          {date(item.updatedAt)}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`${item.title} 的操作`}
+                              >
+                                <MoreHorizontal />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuGroup>
+                                <DropdownMenuItem
+                                  onSelect={() =>
+                                    openEditor({
+                                      mode: 'edit-episode',
+                                      episode: item
+                                    })
+                                  }
+                                >
+                                  <Pencil />
+                                  编辑剧集
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  variant="destructive"
+                                  onSelect={() =>
+                                    openEditor({
+                                      mode: 'delete-episode',
+                                      episode: item
+                                    })
+                                  }
+                                >
+                                  <Trash2 />
+                                  删除剧集
+                                </DropdownMenuItem>
+                              </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </section>
             ) : (
-              <Empty
-                icon="episode"
-                title={
-                  query || filter !== 'ALL' ? '没有找到剧集' : '还没有剧集'
-                }
-                action={query || filter !== 'ALL' ? '清除筛选' : '新建剧集'}
-                onAction={() =>
-                  query || filter !== 'ALL'
-                    ? (setQuery(''), setFilter('ALL'))
-                    : openEditor({ mode: 'create-episode' })
-                }
-              />
+              <Empty>
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <Film />
+                  </EmptyMedia>
+                  <EmptyTitle role="heading" aria-level={2}>
+                    {query || filter !== 'ALL' ? '没有找到剧集' : '还没有剧集'}
+                  </EmptyTitle>
+                  <EmptyDescription>
+                    {query || filter !== 'ALL'
+                      ? '试试其他关键词，或清除当前筛选。'
+                      : '从第一集开始，为故事安排一个开场。'}
+                  </EmptyDescription>
+                </EmptyHeader>
+                {(query || filter !== 'ALL') && (
+                  <EmptyContent>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setQuery('')
+                        setFilter('ALL')
+                      }}
+                    >
+                      清除筛选
+                    </Button>
+                  </EmptyContent>
+                )}
+              </Empty>
             )
           ) : visibleProjects.length ? (
-            <section aria-label="项目列表" className="project-list">
-              <div className="project-columns" aria-hidden="true">
-                <span>项目名称</span>
-                <span>最近更新</span>
-                <span />
-              </div>
-              {visibleProjects.map((item) => (
-                <article key={item.id} className="project-entry">
-                  <button
-                    className="project-open"
-                    aria-label={item.name}
-                    title={item.name}
-                    onClick={() => selectProject(item.id)}
-                  >
-                    <FolderClosed
-                      className="project-icon"
-                      size={22}
-                      aria-hidden="true"
-                    />
-                    <span className="project-details">
-                      <span className="project-name">{item.name}</span>
-                      <span className="project-created">
-                        更新于 {date(item.updatedAt)}
-                      </span>
-                    </span>
-                    <span className="project-updated">
-                      {date(item.updatedAt)}
-                    </span>
-                  </button>
-                  <div className="project-actions">{projectMenu(item)}</div>
-                </article>
-              ))}
+            <section aria-label="项目列表">
+              <Table className="table-fixed">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>项目名称</TableHead>
+                    <TableHead className="hidden w-40 md:table-cell">
+                      最近更新
+                    </TableHead>
+                    <TableHead className="w-12">
+                      <span className="sr-only">操作</span>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {visibleProjects.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="whitespace-normal">
+                        <Button
+                          variant="link"
+                          className="max-w-full justify-start"
+                          aria-label={item.name}
+                          title={item.name}
+                          onClick={() => selectProject(item.id)}
+                        >
+                          <FolderClosed data-icon="inline-start" />
+                          <span className="truncate">{item.name}</span>
+                        </Button>
+                        <p className="mt-1 text-xs text-muted-foreground md:hidden">
+                          更新于 {date(item.updatedAt)}
+                        </p>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {date(item.updatedAt)}
+                      </TableCell>
+                      <TableCell>{projectMenu(item)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </section>
           ) : (
-            <Empty
-              icon="project"
-              title={query ? '没有找到项目' : '还没有项目'}
-              action={query ? '清除搜索' : undefined}
-              onAction={() => setQuery('')}
-            />
+            <Empty>
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FolderOpen />
+                </EmptyMedia>
+                <EmptyTitle role="heading" aria-level={2}>
+                  {query ? '没有找到项目' : '还没有项目'}
+                </EmptyTitle>
+                <EmptyDescription>
+                  {query
+                    ? '试试其他关键词，或清除当前筛选。'
+                    : '为你的故事新建一个项目，再逐集展开。'}
+                </EmptyDescription>
+              </EmptyHeader>
+              {query && (
+                <EmptyContent>
+                  <Button variant="outline" onClick={() => setQuery('')}>
+                    清除搜索
+                  </Button>
+                </EmptyContent>
+              )}
+            </Empty>
           )}
-        </main>
-      </div>
+        </div>
+      </SidebarInset>
       <Dialog
-        open={editor !== null}
+        open={editor !== null && !deleting}
         onOpenChange={(open) => {
           if (!open && !busy) setEditor(null)
         }}
       >
         <DialogContent
+          className="max-h-[90dvh] overflow-y-auto"
+          showCloseButton={!busy}
           onEscapeKeyDown={(event) => {
             if (busy) event.preventDefault()
           }}
@@ -854,138 +1029,130 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
             if (busy) event.preventDefault()
           }}
         >
-          <DialogTitle className="pr-7 text-lg font-semibold">
-            {editorTitle}
-          </DialogTitle>
-          <DialogDescription
-            className={
-              deleting
-                ? 'break-words text-sm leading-6 text-muted-foreground'
-                : 'sr-only'
-            }
-          >
-            {deleting
-              ? `“${editor && 'project' in editor ? editor.project.name : editor && 'episode' in editor ? editor.episode.title : ''}”${isProjectEditor ? '及其全部剧集' : ''}将被删除，无法恢复。`
-              : isProjectEditor
-                ? '填写项目名称。'
-                : '填写剧集名称并设置状态。'}
-          </DialogDescription>
-          <form className="grid gap-5" onSubmit={(event) => void save(event)}>
-            {!deleting && (
-              <>
-                <label className="field" htmlFor="item-name">
+          <DialogHeader>
+            <DialogTitle>{editorTitle}</DialogTitle>
+            <DialogDescription>
+              {isProjectEditor ? '填写项目名称。' : '填写剧集名称并设置状态。'}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(event) => void save(event)}>
+            <FieldGroup>
+              <Field data-disabled={busy}>
+                <FieldLabel htmlFor="item-name">
                   {isProjectEditor ? '项目名称' : '剧集名称'}
-                  <Input
-                    id="item-name"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    required
-                    maxLength={isProjectEditor ? 80 : 200}
+                </FieldLabel>
+                <Input
+                  id="item-name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  required
+                  maxLength={isProjectEditor ? 80 : 200}
+                  disabled={busy}
+                  autoFocus
+                />
+              </Field>
+              {!isProjectEditor && (
+                <Field data-disabled={busy}>
+                  <FieldLabel htmlFor="episode-status">状态</FieldLabel>
+                  <Select
+                    value={status}
+                    onValueChange={(value) => setStatus(value as EpisodeStatus)}
                     disabled={busy}
-                    autoFocus
-                  />
-                </label>
-                {!isProjectEditor && (
-                  <label className="field" htmlFor="episode-status">
-                    状态
-                    <select
+                  >
+                    <SelectTrigger
                       id="episode-status"
                       aria-label="状态"
-                      className="native-select h-10"
-                      value={status}
-                      onChange={(event) =>
-                        setStatus(event.target.value as EpisodeStatus)
-                      }
-                      disabled={busy}
+                      className="w-full"
                     >
-                      {EPISODE_STATUSES.map((value) => (
-                        <option key={value} value={value}>
-                          {statuses[value]}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-              </>
-            )}
-            {formError && <ErrorNotice text={formError} />}
-            <div className="mt-1 flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busy}
-                onClick={() => setEditor(null)}
-              >
-                取消
-              </Button>
-              <Button
-                type="submit"
-                variant={deleting ? 'destructive' : 'default'}
-                disabled={busy}
-              >
-                {busy ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : !deleting && !editor?.mode.startsWith('create') ? (
-                  <Check />
-                ) : null}
-                {deleting
-                  ? '删除'
-                  : editor?.mode === 'create-project'
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {EPISODE_STATUSES.map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {statuses[value]}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+              {formError && (
+                <Alert variant="destructive">
+                  <AlertDescription>{formError}</AlertDescription>
+                </Alert>
+              )}
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => setEditor(null)}
+                >
+                  取消
+                </Button>
+                <Button type="submit" disabled={busy}>
+                  {busy ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : !editor?.mode.startsWith('create') ? (
+                    <Check data-icon="inline-start" />
+                  ) : null}
+                  {editor?.mode === 'create-project'
                     ? '创建项目'
                     : editor?.mode === 'create-episode'
                       ? '创建剧集'
                       : '保存'}
-              </Button>
-            </div>
+                </Button>
+              </DialogFooter>
+            </FieldGroup>
           </form>
         </DialogContent>
       </Dialog>
-    </div>
-  )
-}
-
-function Loading() {
-  return (
-    <div
-      role="status"
-      className="flex min-h-64 items-center justify-center gap-2 text-sm text-muted-foreground"
-    >
-      <LoaderCircle className="size-4 animate-spin" />
-      正在加载
-    </div>
-  )
-}
-function Empty({
-  icon,
-  title,
-  action,
-  onAction
-}: {
-  icon: 'project' | 'episode'
-  title: string
-  action: string | undefined
-  onAction: () => void
-}) {
-  const Icon = icon === 'project' ? FolderOpen : Film
-  return (
-    <div className="empty-state">
-      <Icon className="empty-icon" size={30} strokeWidth={1.3} />
-      <div className="empty-copy">
-        <h2>{title}</h2>
-        <p>
-          {action?.startsWith('清除')
-            ? '试试其他关键词，或清除当前筛选。'
-            : icon === 'project'
-              ? '为你的故事新建一个项目，再逐集展开。'
-              : '从第一集开始，为故事安排一个开场。'}
-        </p>
-      </div>
-      {action && (
-        <Button variant="outline" onClick={onAction}>
-          {action.startsWith('新建') && <Plus />}
-          {action}
-        </Button>
-      )}
-    </div>
+      <AlertDialog
+        open={!!deleting}
+        onOpenChange={(open) => {
+          if (!open && !busy) setEditor(null)
+        }}
+      >
+        <AlertDialogContent
+          className="max-h-[90dvh] overflow-y-auto"
+          onEscapeKeyDown={(event) => {
+            if (busy) event.preventDefault()
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle>{editorTitle}</AlertDialogTitle>
+            <AlertDialogDescription className="wrap-anywhere">
+              “
+              {editor && 'project' in editor
+                ? editor.project.name
+                : editor && 'episode' in editor
+                  ? editor.episode.title
+                  : ''}
+              ”{isProjectEditor ? '及其全部剧集' : ''}将被删除，无法恢复。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {formError && (
+            <Alert variant="destructive">
+              <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy}>取消</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={busy}
+              onClick={(event) => {
+                event.preventDefault()
+                void save(event)
+              }}
+            >
+              {busy && <Spinner data-icon="inline-start" />}删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
