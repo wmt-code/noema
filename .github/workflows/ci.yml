@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Check, test and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          package-manager-cache: false
+
+      - name: Set up Corepack
+        run: |
+          npm install --global corepack
+          corepack enable
+
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Configure test environment
+        run: cp .env.example .env
+
+      - name: Lint, format and typecheck
+        run: corepack pnpm check
+
+      - name: Run unit tests
+        run: corepack pnpm test
+
+      - name: Build server and desktop
+        run: corepack pnpm build
+
+      - name: Start PostgreSQL and Redis
+        run: |
+          corepack pnpm infra:up
+          corepack pnpm infra:check
+
+      - name: Validate schema and deploy migrations
+        run: |
+          corepack pnpm db:validate
+          corepack pnpm db:deploy
+
+      - name: Run database integration tests
+        run: |
+          corepack pnpm db:check
+          corepack pnpm db:test
+
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose -f infra/compose.yaml logs --no-color
+
+      - name: Stop test services
+        if: always()
+        run: docker compose -f infra/compose.yaml down --volumes
