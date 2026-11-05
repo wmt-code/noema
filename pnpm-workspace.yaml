@@ -3,5 +3,7 @@ packages:
   - 'packages/*'
 
 allowBuilds:
+  '@google/genai': false
   '@prisma/engines': true
   prisma: true
+  protobufjs: false

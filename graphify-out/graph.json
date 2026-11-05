@@ -4,17 +4,56 @@
   "graph": {},
   "nodes": [
     {
+      "id": "apps_server_src_agent_service_agentdefinition",
+      "label": "AgentDefinition",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "agentdefinition",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L28"
+    },
+    {
+      "id": "apps_server_src_agent_service_agentscope",
+      "label": "AgentScope",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "agentscope",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "apps_server_src_agent_service_agentservice",
+      "label": "AgentService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "agentservice",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L47"
+    },
+    {
       "id": "apps_server_src_app_module_appmodule",
       "label": "AppModule",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "appmodule",
       "source_file": "apps/server/src/app.module.ts",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "apps_server_src_auth_controller_authcontroller",
@@ -23,7 +62,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "authcontroller",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -36,7 +75,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "response",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -49,24 +88,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "authguard",
       "source_file": "apps/server/src/auth.guard.ts",
       "source_location": "L25"
-    },
-    {
-      "id": "apps_server_src_auth_guard_authrequest",
-      "label": "AuthRequest",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "authrequest",
-      "source_file": "apps/server/src/auth.guard.ts",
-      "source_location": "L11"
     },
     {
       "id": "apps_server_src_auth_service_authservice",
@@ -75,7 +101,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "authservice",
       "source_file": "apps/server/src/auth.service.ts",
@@ -88,7 +114,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "healthcontroller",
       "source_file": "apps/server/src/health.controller.ts",
@@ -101,7 +127,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "ownershipservice",
       "source_file": "apps/server/src/ownership.service.ts",
@@ -114,7 +140,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "resource",
       "source_file": "apps/server/src/ownership.service.ts",
@@ -127,24 +153,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "prismaservice",
       "source_file": "apps/server/src/prisma.service.ts",
       "source_location": "L6"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller",
-      "label": "ProjectController",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "projectcontroller",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L33"
     },
     {
       "id": "apps_desktop_src_renderer_src_app_editor",
@@ -342,6 +355,32 @@
       "source_location": "L9"
     },
     {
+      "id": "apps_server_src_auth_guard_authrequest",
+      "label": "AuthRequest",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "authrequest",
+      "source_file": "apps/server/src/auth.guard.ts",
+      "source_location": "L11"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller",
+      "label": "ProjectController",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "projectcontroller",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L33"
+    },
+    {
       "id": "apps_desktop_src_renderer_src_lib_api_apierror",
       "label": "ApiError",
       "_callable": true,
@@ -368,12 +407,36 @@
       "source_location": "L33"
     },
     {
+      "id": "apps_server_src_agent_service_agentservice_constructor",
+      "label": ".constructor()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".constructor()",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L48"
+    },
+    {
+      "id": "apps_server_src_agent_service_agentservice_run",
+      "label": ".run()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": ".run()",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L50"
+    },
+    {
       "id": "apps_server_src_auth_controller_authcontroller_constructor",
       "label": ".constructor()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -385,7 +448,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".login()",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -397,7 +460,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".logout()",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -409,7 +472,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".me()",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -421,7 +484,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".register()",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -433,7 +496,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".canactivate()",
       "source_file": "apps/server/src/auth.guard.ts",
@@ -445,7 +508,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/auth.guard.ts",
@@ -457,7 +520,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "public()",
       "source_file": "apps/server/src/auth.guard.ts",
@@ -469,7 +532,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".authenticate()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -481,7 +544,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -493,7 +556,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".login()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -505,7 +568,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".logout()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -517,7 +580,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".register()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -529,7 +592,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".throttle()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -541,7 +604,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "credentials()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -553,7 +616,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "derive()",
       "source_file": "apps/server/src/auth.service.ts",
@@ -565,7 +628,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".health()",
       "source_file": "apps/server/src/health.controller.ts",
@@ -577,23 +640,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "bootstrap()",
       "source_file": "apps/server/src/main.ts",
       "source_location": "L5"
-    },
-    {
-      "id": "apps_server_src_ownership_service_ownershipservice_assertowned",
-      "label": ".assertOwned()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".assertowned()",
-      "source_file": "apps/server/src/ownership.service.ts",
-      "source_location": "L24"
     },
     {
       "id": "apps_server_src_ownership_service_ownershipservice_constructor",
@@ -601,7 +652,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/ownership.service.ts",
@@ -613,7 +664,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/prisma.service.ts",
@@ -625,23 +676,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".onmoduledestroy()",
       "source_file": "apps/server/src/prisma.service.ts",
       "source_location": "L21"
-    },
-    {
-      "id": "apps_server_src_project_controller_parse",
-      "label": "parse()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "parse()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L24"
     },
     {
       "id": "apps_server_src_project_controller_projectcontroller_constructor",
@@ -649,131 +688,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "apps/server/src/project.controller.ts",
       "source_location": "L34"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_createepisode",
-      "label": ".createEpisode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".createepisode()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L97"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_createproject",
-      "label": ".createProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".createproject()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_deleteepisode",
-      "label": ".deleteEpisode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".deleteepisode()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L150"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_deleteproject",
-      "label": ".deleteProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".deleteproject()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L88"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_getepisode",
-      "label": ".getEpisode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".getepisode()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L126"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_getproject",
-      "label": ".getProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".getproject()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L62"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_listepisodes",
-      "label": ".listEpisodes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".listepisodes()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L114"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_listprojects",
-      "label": ".listProjects()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".listprojects()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L54"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_patchepisode",
-      "label": ".patchEpisode()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".patchepisode()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L132"
-    },
-    {
-      "id": "apps_server_src_project_controller_projectcontroller_patchproject",
-      "label": ".patchProject()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": ".patchproject()",
-      "source_file": "apps/server/src/project.controller.ts",
-      "source_location": "L68"
     },
     {
       "id": "apps_desktop_src_renderer_src_app_brand",
@@ -1026,6 +945,66 @@
       "norm_label": "menu()",
       "source_file": "apps/desktop/scripts/smoke-projects.mjs",
       "source_location": "L116"
+    },
+    {
+      "id": "apps_server_test_agent_fixtures_definition",
+      "label": "definition()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "definition()",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L50"
+    },
+    {
+      "id": "apps_server_test_agent_fixtures_readtool",
+      "label": "readTool()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "readtool()",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L69"
+    },
+    {
+      "id": "apps_server_test_agent_fixtures_response",
+      "label": "response()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "response()",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L17"
+    },
+    {
+      "id": "apps_server_test_agent_fixtures_toolcall",
+      "label": "toolCall()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "toolcall()",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L62"
+    },
+    {
+      "id": "apps_server_test_agent_test_service",
+      "label": "service()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "service()",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L15"
     },
     {
       "id": "apps_server_test_database_deploy",
@@ -2348,6 +2327,150 @@
       "source_location": "L28"
     },
     {
+      "id": "apps_server_src_ownership_service_ownershipservice_assertowned",
+      "label": ".assertOwned()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".assertowned()",
+      "source_file": "apps/server/src/ownership.service.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "apps_server_src_project_controller_parse",
+      "label": "parse()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "parse()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L24"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_createepisode",
+      "label": ".createEpisode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".createepisode()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L97"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_createproject",
+      "label": ".createProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".createproject()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L40"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_deleteepisode",
+      "label": ".deleteEpisode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".deleteepisode()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L150"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_deleteproject",
+      "label": ".deleteProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".deleteproject()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L88"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_getepisode",
+      "label": ".getEpisode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".getepisode()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L126"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_getproject",
+      "label": ".getProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".getproject()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L62"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_listepisodes",
+      "label": ".listEpisodes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".listepisodes()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L114"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_listprojects",
+      "label": ".listProjects()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".listprojects()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L54"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_patchepisode",
+      "label": ".patchEpisode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".patchepisode()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L132"
+    },
+    {
+      "id": "apps_server_src_project_controller_projectcontroller_patchproject",
+      "label": ".patchProject()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": ".patchproject()",
+      "source_file": "apps/server/src/project.controller.ts",
+      "source_location": "L68"
+    },
+    {
       "id": "apps_desktop_src_renderer_src_app_date",
       "label": "date()",
       "_callable": true,
@@ -2478,6 +2601,18 @@
       "norm_label": "request()",
       "source_file": "apps/desktop/src/renderer/src/lib/api.ts",
       "source_location": "L12"
+    },
+    {
+      "id": "apps_server_test_agent_test_status",
+      "label": "status()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 6,
+      "community_name": "Workspace",
+      "file_type": "code",
+      "norm_label": "status()",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L16"
     },
     {
       "id": "apps_desktop_src_renderer_src_components_ui_sheet_sheet",
@@ -2960,11 +3095,44 @@
       "source_location": "L5"
     },
     {
+      "id": "apps_server_src_agent_service",
+      "label": "agent.service.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "agent.service.ts",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_server_src_agent_service_limitsschema",
+      "label": "limitsSchema",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "limitsschema",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "apps_server_src_agent_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "app.module.ts",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
       "id": "apps_server_src_app_module",
       "label": "app.module.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "app.module.ts",
       "source_file": "apps/server/src/app.module.ts",
@@ -2975,7 +3143,7 @@
       "label": "auth.controller.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "auth.controller.ts",
       "source_file": "apps/server/src/auth.controller.ts",
@@ -2986,7 +3154,7 @@
       "label": "Body",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "body",
       "source_file": "",
@@ -2997,7 +3165,7 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "controller",
       "source_file": "",
@@ -3008,7 +3176,7 @@
       "label": "Get",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "get",
       "source_file": "",
@@ -3019,7 +3187,7 @@
       "label": "HttpCode",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "httpcode",
       "source_file": "",
@@ -3030,7 +3198,7 @@
       "label": "Post",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "post",
       "source_file": "",
@@ -3041,7 +3209,7 @@
       "label": "Req",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "req",
       "source_file": "",
@@ -3052,7 +3220,7 @@
       "label": "auth.guard.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "auth.guard.ts",
       "source_file": "apps/server/src/auth.guard.ts",
@@ -3063,7 +3231,7 @@
       "label": "CurrentUser",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "currentuser",
       "source_file": "apps/server/src/auth.guard.ts",
@@ -3074,7 +3242,7 @@
       "label": "Injectable",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "injectable",
       "source_file": "",
@@ -3085,7 +3253,7 @@
       "label": "auth.service.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "auth.service.ts",
       "source_file": "apps/server/src/auth.service.ts",
@@ -3096,7 +3264,7 @@
       "label": "publicUser",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "publicuser",
       "source_file": "apps/server/src/auth.service.ts",
@@ -3107,7 +3275,7 @@
       "label": "Injectable",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "injectable",
       "source_file": "",
@@ -3118,7 +3286,7 @@
       "label": "health.controller.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "health.controller.ts",
       "source_file": "apps/server/src/health.controller.ts",
@@ -3129,7 +3297,7 @@
       "label": "Controller",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "controller",
       "source_file": "",
@@ -3140,7 +3308,7 @@
       "label": "Get",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "get",
       "source_file": "",
@@ -3151,7 +3319,7 @@
       "label": "main.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "main.ts",
       "source_file": "apps/server/src/main.ts",
@@ -3162,7 +3330,7 @@
       "label": "ownership.service.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "ownership.service.ts",
       "source_file": "apps/server/src/ownership.service.ts",
@@ -3173,7 +3341,7 @@
       "label": "Injectable",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "injectable",
       "source_file": "",
@@ -3184,7 +3352,7 @@
       "label": "prisma.service.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "prisma.service.ts",
       "source_file": "apps/server/src/prisma.service.ts",
@@ -3195,7 +3363,7 @@
       "label": "Injectable",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "injectable",
       "source_file": "",
@@ -3206,119 +3374,20 @@
       "label": "project.controller.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "project.controller.ts",
       "source_file": "apps/server/src/project.controller.ts",
       "source_location": "L1"
     },
     {
-      "id": "apps_server_src_project_controller_ts_body",
-      "label": "Body",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "body",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_server_src_project_controller_ts_controller",
-      "label": "Controller",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "controller",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_server_src_project_controller_ts_get",
-      "label": "Get",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "get",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_server_src_project_controller_ts_httpcode",
-      "label": "HttpCode",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "httpcode",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_server_src_project_controller_ts_post",
-      "label": "Post",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "post",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "apps_server_src_project_controller_ts_req",
-      "label": "Req",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "req",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "delete",
-      "label": "Delete",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "delete",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "module",
       "label": "Module",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "module",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "param",
-      "label": "Param",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "param",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "patch",
-      "label": "Patch",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "AuthRequest",
-      "file_type": "code",
-      "norm_label": "patch",
       "source_file": "",
       "source_location": ""
     },
@@ -3327,7 +3396,7 @@
       "label": "Res",
       "_origin": "ast",
       "community": 0,
-      "community_name": "AuthRequest",
+      "community_name": "app.module.ts",
       "file_type": "code",
       "norm_label": "res",
       "source_file": "",
@@ -3464,6 +3533,66 @@
       "norm_label": "\u8ba4\u8bc1\u4e0e\u4e1a\u52a1 api",
       "source_file": "apps/server/README.md",
       "source_location": "L60"
+    },
+    {
+      "id": "docs_agent_runtime",
+      "label": "agent-runtime.md",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "\u7b2c\u4e00\u9636\u6bb5\u5f00\u53d1\u6b65\u9aa4",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "agent-runtime.md",
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_agent_runtime_agent_\u8fd0\u884c\u57fa\u7840",
+      "label": "Agent \u8fd0\u884c\u57fa\u7840",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "\u7b2c\u4e00\u9636\u6bb5\u5f00\u53d1\u6b65\u9aa4",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "agent \u8fd0\u884c\u57fa\u7840",
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "docs_agent_runtime_\u4f9d\u8d56\u4e0e\u9a8c\u8bc1",
+      "label": "\u4f9d\u8d56\u4e0e\u9a8c\u8bc1",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "\u7b2c\u4e00\u9636\u6bb5\u5f00\u53d1\u6b65\u9aa4",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\u4f9d\u8d56\u4e0e\u9a8c\u8bc1",
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "docs_agent_runtime_\u6267\u884c\u9650\u5236",
+      "label": "\u6267\u884c\u9650\u5236",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "\u7b2c\u4e00\u9636\u6bb5\u5f00\u53d1\u6b65\u9aa4",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\u6267\u884c\u9650\u5236",
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "docs_agent_runtime_\u8c03\u7528\u7ea6\u5b9a",
+      "label": "\u8c03\u7528\u7ea6\u5b9a",
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "\u7b2c\u4e00\u9636\u6bb5\u5f00\u53d1\u6b65\u9aa4",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\u8c03\u7528\u7ea6\u5b9a",
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L5"
     },
     {
       "id": "docs_engineering_plan",
@@ -4442,6 +4571,72 @@
       "source_location": "L14"
     },
     {
+      "id": "apps_server_test_agent_fixtures",
+      "label": "agent-fixtures.mjs",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "agent-fixtures.mjs",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_server_test_agent_fixtures_model",
+      "label": "model",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "model",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L4"
+    },
+    {
+      "id": "apps_server_test_agent_integration",
+      "label": "agent.integration.mjs",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "agent.integration.mjs",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_server_test_agent_test",
+      "label": "agent.test.mjs",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "agent.test.mjs",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L1"
+    },
+    {
+      "id": "apps_server_test_agent_test_input",
+      "label": "input",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "input",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L14"
+    },
+    {
+      "id": "apps_server_test_agent_test_scope",
+      "label": "scope",
+      "_origin": "ast",
+      "community": 14,
+      "community_name": "database.mjs",
+      "file_type": "code",
+      "norm_label": "scope",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L9"
+    },
+    {
       "id": "apps_server_test_auth_integration",
       "label": "auth.integration.mjs",
       "_origin": "ast",
@@ -5143,6 +5338,28 @@
       "source_location": "L16"
     },
     {
+      "id": "apps_server_package_dependencies_earendil_works_pi_agent_core",
+      "label": "@earendil-works/pi-agent-core",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@earendil-works/pi-agent-core",
+      "source_file": "apps/server/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "apps_server_package_dependencies_earendil_works_pi_ai",
+      "label": "@earendil-works/pi-ai",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "@earendil-works/pi-ai",
+      "source_file": "apps/server/package.json",
+      "source_location": "L18"
+    },
+    {
       "id": "apps_server_package_dependencies_nestjs_common",
       "label": "@nestjs/common",
       "_origin": "ast",
@@ -5151,7 +5368,7 @@
       "file_type": "code",
       "norm_label": "@nestjs/common",
       "source_file": "apps/server/package.json",
-      "source_location": "L17"
+      "source_location": "L19"
     },
     {
       "id": "apps_server_package_dependencies_nestjs_core",
@@ -5162,7 +5379,7 @@
       "file_type": "code",
       "norm_label": "@nestjs/core",
       "source_file": "apps/server/package.json",
-      "source_location": "L18"
+      "source_location": "L20"
     },
     {
       "id": "apps_server_package_dependencies_nestjs_platform_express",
@@ -5173,7 +5390,7 @@
       "file_type": "code",
       "norm_label": "@nestjs/platform-express",
       "source_file": "apps/server/package.json",
-      "source_location": "L19"
+      "source_location": "L21"
     },
     {
       "id": "apps_server_package_dependencies_noema_shared",
@@ -5184,7 +5401,7 @@
       "file_type": "code",
       "norm_label": "@noema/shared",
       "source_file": "apps/server/package.json",
-      "source_location": "L20"
+      "source_location": "L22"
     },
     {
       "id": "apps_server_package_dependencies_prisma_adapter_pg",
@@ -5195,7 +5412,7 @@
       "file_type": "code",
       "norm_label": "@prisma/adapter-pg",
       "source_file": "apps/server/package.json",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "apps_server_package_dependencies_prisma_client",
@@ -5206,7 +5423,7 @@
       "file_type": "code",
       "norm_label": "@prisma/client",
       "source_file": "apps/server/package.json",
-      "source_location": "L22"
+      "source_location": "L24"
     },
     {
       "id": "apps_server_package_dependencies_reflect_metadata",
@@ -5217,7 +5434,7 @@
       "file_type": "code",
       "norm_label": "reflect-metadata",
       "source_file": "apps/server/package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "apps_server_package_dependencies_rxjs",
@@ -5228,7 +5445,18 @@
       "file_type": "code",
       "norm_label": "rxjs",
       "source_file": "apps/server/package.json",
-      "source_location": "L24"
+      "source_location": "L26"
+    },
+    {
+      "id": "apps_server_package_dependencies_zod",
+      "label": "zod",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "code",
+      "norm_label": "zod",
+      "source_file": "apps/server/package.json",
+      "source_location": "L27"
     },
     {
       "id": "apps_server_package_devdependencies",
@@ -5239,7 +5467,7 @@
       "file_type": "code",
       "norm_label": "devdependencies",
       "source_file": "apps/server/package.json",
-      "source_location": "L26"
+      "source_location": "L29"
     },
     {
       "id": "apps_server_package_devdependencies_types_node",
@@ -5250,7 +5478,7 @@
       "file_type": "code",
       "norm_label": "@types/node",
       "source_file": "apps/server/package.json",
-      "source_location": "L27"
+      "source_location": "L30"
     },
     {
       "id": "apps_server_package_devdependencies_typescript",
@@ -5261,7 +5489,7 @@
       "file_type": "code",
       "norm_label": "typescript",
       "source_file": "apps/server/package.json",
-      "source_location": "L28"
+      "source_location": "L31"
     },
     {
       "id": "apps_server_package_name",
@@ -5415,7 +5643,7 @@
       "file_type": "concept",
       "norm_label": "@noema/shared",
       "source_file": "apps/server/package.json",
-      "source_location": "L20"
+      "source_location": "L22"
     },
     {
       "id": "apps_server_package_json_types_node",
@@ -5426,7 +5654,7 @@
       "file_type": "concept",
       "norm_label": "@types/node",
       "source_file": "apps/server/package.json",
-      "source_location": "L27"
+      "source_location": "L30"
     },
     {
       "id": "apps_server_package_json_typescript",
@@ -5437,7 +5665,29 @@
       "file_type": "concept",
       "norm_label": "typescript",
       "source_file": "apps/server/package.json",
-      "source_location": "L28"
+      "source_location": "L31"
+    },
+    {
+      "id": "earendil_works_pi_agent_core",
+      "label": "@earendil-works/pi-agent-core",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "concept",
+      "norm_label": "@earendil-works/pi-agent-core",
+      "source_file": "apps/server/package.json",
+      "source_location": "L17"
+    },
+    {
+      "id": "earendil_works_pi_ai",
+      "label": "@earendil-works/pi-ai",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "concept",
+      "norm_label": "@earendil-works/pi-ai",
+      "source_file": "apps/server/package.json",
+      "source_location": "L18"
     },
     {
       "id": "nestjs_common",
@@ -5448,7 +5698,7 @@
       "file_type": "concept",
       "norm_label": "@nestjs/common",
       "source_file": "apps/server/package.json",
-      "source_location": "L17"
+      "source_location": "L19"
     },
     {
       "id": "nestjs_core",
@@ -5459,7 +5709,7 @@
       "file_type": "concept",
       "norm_label": "@nestjs/core",
       "source_file": "apps/server/package.json",
-      "source_location": "L18"
+      "source_location": "L20"
     },
     {
       "id": "nestjs_platform_express",
@@ -5470,7 +5720,7 @@
       "file_type": "concept",
       "norm_label": "@nestjs/platform-express",
       "source_file": "apps/server/package.json",
-      "source_location": "L19"
+      "source_location": "L21"
     },
     {
       "id": "prisma_adapter_pg",
@@ -5481,7 +5731,7 @@
       "file_type": "concept",
       "norm_label": "@prisma/adapter-pg",
       "source_file": "apps/server/package.json",
-      "source_location": "L21"
+      "source_location": "L23"
     },
     {
       "id": "prisma_client",
@@ -5492,7 +5742,7 @@
       "file_type": "concept",
       "norm_label": "@prisma/client",
       "source_file": "apps/server/package.json",
-      "source_location": "L22"
+      "source_location": "L24"
     },
     {
       "id": "reflect_metadata",
@@ -5503,7 +5753,7 @@
       "file_type": "concept",
       "norm_label": "reflect-metadata",
       "source_file": "apps/server/package.json",
-      "source_location": "L23"
+      "source_location": "L25"
     },
     {
       "id": "rxjs",
@@ -5514,7 +5764,18 @@
       "file_type": "concept",
       "norm_label": "rxjs",
       "source_file": "apps/server/package.json",
-      "source_location": "L24"
+      "source_location": "L26"
+    },
+    {
+      "id": "zod",
+      "label": "zod",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "dependencies",
+      "file_type": "concept",
+      "norm_label": "zod",
+      "source_file": "apps/server/package.json",
+      "source_location": "L27"
     },
     {
       "id": "claude_skills_commit_conventions_skill",
@@ -7628,6 +7889,18 @@
       "source_location": "L1"
     },
     {
+      "id": "agents_git_\u534f\u4f5c\u89c4\u8303",
+      "label": "Git \u534f\u4f5c\u89c4\u8303",
+      "_origin": "ast",
+      "community": 52,
+      "community_name": "AGENTS.md",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "git \u534f\u4f5c\u89c4\u8303",
+      "source_file": "AGENTS.md",
+      "source_location": "L1"
+    },
+    {
       "id": "agents_graphify",
       "label": "Graphify",
       "_origin": "ast",
@@ -7637,7 +7910,7 @@
       "node_kind": "heading",
       "norm_label": "graphify",
       "source_file": "AGENTS.md",
-      "source_location": "L11"
+      "source_location": "L22"
     },
     {
       "id": "agents_\u524d\u7aef\u7ec4\u4ef6\u89c4\u8303",
@@ -7649,7 +7922,7 @@
       "node_kind": "heading",
       "norm_label": "\u524d\u7aef\u7ec4\u4ef6\u89c4\u8303",
       "source_file": "AGENTS.md",
-      "source_location": "L1"
+      "source_location": "L12"
     },
     {
       "id": "apps_desktop_src_renderer_src_components_ui_badge",
@@ -7672,6 +7945,105 @@
       "norm_label": "badgevariants",
       "source_file": "apps/desktop/src/renderer/src/components/ui/badge.tsx",
       "source_location": "L6"
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_body",
+      "label": "Body",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "body",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_controller",
+      "label": "Controller",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "controller",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_get",
+      "label": "Get",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "get",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_httpcode",
+      "label": "HttpCode",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "httpcode",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_post",
+      "label": "Post",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "post",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "apps_server_src_project_controller_ts_req",
+      "label": "Req",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "req",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "delete",
+      "label": "Delete",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "delete",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "param",
+      "label": "Param",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "param",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "patch",
+      "label": "Patch",
+      "_origin": "ast",
+      "community": 54,
+      "community_name": "AuthRequest",
+      "file_type": "code",
+      "norm_label": "patch",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "apps_desktop_package_devdependencies",
@@ -8056,7 +8428,7 @@
       "file_type": "code",
       "norm_label": "emitdecoratormetadata",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L12"
+      "source_location": "L13"
     },
     {
       "id": "apps_server_tsconfig_compileroptions_experimentaldecorators",
@@ -8067,7 +8439,7 @@
       "file_type": "code",
       "norm_label": "experimentaldecorators",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L11"
+      "source_location": "L12"
     },
     {
       "id": "apps_server_tsconfig_compileroptions_forceconsistentcasinginfilenames",
@@ -8078,7 +8450,7 @@
       "file_type": "code",
       "norm_label": "forceconsistentcasinginfilenames",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L15"
+      "source_location": "L16"
     },
     {
       "id": "apps_server_tsconfig_compileroptions_lib",
@@ -8122,7 +8494,7 @@
       "file_type": "code",
       "norm_label": "noemitonerror",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "apps_server_tsconfig_compileroptions_outdir",
@@ -8147,6 +8519,17 @@
       "source_location": "L8"
     },
     {
+      "id": "apps_server_tsconfig_compileroptions_skiplibcheck",
+      "label": "skipLibCheck",
+      "_origin": "ast",
+      "community": 9,
+      "community_name": "compilerOptions",
+      "file_type": "code",
+      "norm_label": "skiplibcheck",
+      "source_file": "apps/server/tsconfig.json",
+      "source_location": "L11"
+    },
+    {
       "id": "apps_server_tsconfig_compileroptions_sourcemap",
       "label": "sourceMap",
       "_origin": "ast",
@@ -8155,7 +8538,7 @@
       "file_type": "code",
       "norm_label": "sourcemap",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L13"
+      "source_location": "L14"
     },
     {
       "id": "apps_server_tsconfig_compileroptions_strict",
@@ -8199,7 +8582,7 @@
       "file_type": "code",
       "norm_label": "include",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L17"
+      "source_location": "L18"
     },
     {
       "id": "apps_server_tsconfig_json_ref_es2023",
@@ -8232,7 +8615,7 @@
       "file_type": "concept",
       "norm_label": "src/**/*.ts",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L17"
+      "source_location": "L18"
     }
   ],
   "links": [
@@ -8777,6 +9160,18 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_test_agent_fixtures_definition",
+      "target": "apps_server_test_agent_fixtures_response",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_test_database_testapp",
       "target": "apps_server_test_database_deploy",
       "relation": "calls",
@@ -9077,6 +9472,18 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_src_agent_service_agentservice",
+      "target": "apps_server_src_agent_service_ts_injectable",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "decorator",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_src_app_module_appmodule",
       "target": "module",
       "relation": "references",
@@ -9085,7 +9492,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "apps/server/src/app.module.ts",
-      "source_location": "L11",
+      "source_location": "L12",
       "weight": 1.0
     },
     {
@@ -9821,6 +10228,30 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_src_agent_service_agentscope",
+      "target": "apps_server_src_auth_guard_authrequest",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service_agentscope",
+      "target": "apps_server_src_ownership_service_resource",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "field",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
       "source": "apps_desktop_tsconfig_node",
       "target": "apps_desktop_tsconfig_node_json_ref_tsconfig_json",
       "relation": "extends",
@@ -10033,7 +10464,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -11609,6 +12040,30 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_package_dependencies_earendil_works_pi_agent_core",
+      "target": "earendil_works_pi_agent_core",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/package.json",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_package_dependencies_earendil_works_pi_ai",
+      "target": "earendil_works_pi_ai",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/package.json",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_package_dependencies_nestjs_common",
       "target": "nestjs_common",
       "relation": "imports",
@@ -11617,7 +12072,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -11629,7 +12084,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L18",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -11641,7 +12096,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L19",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -11653,7 +12108,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L20",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -11665,7 +12120,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -11677,7 +12132,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L22",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -11689,7 +12144,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L23",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -11701,7 +12156,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L24",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_package_dependencies_zod",
+      "target": "zod",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/package.json",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -11713,7 +12180,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L27",
+      "source_location": "L30",
       "weight": 1.0
     },
     {
@@ -11725,12 +12192,60 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/server/package.json",
-      "source_location": "L28",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_auth_guard_authrequest",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_ownership_service_ownershipservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_ownership_service_resource",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_controller_authcontroller",
+      "target": "apps_server_src_project_controller_projectcontroller",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/app.module.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_app_module",
+      "target": "apps_server_src_agent_service_agentservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11742,7 +12257,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_guard_authguard",
+      "target": "apps_server_src_auth_controller_authcontroller",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11754,7 +12269,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_service_authservice",
+      "target": "apps_server_src_auth_guard_authguard",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11766,7 +12281,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_health_controller_healthcontroller",
+      "target": "apps_server_src_auth_service_authservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11778,7 +12293,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_ownership_service_ownershipservice",
+      "target": "apps_server_src_health_controller_healthcontroller",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11790,7 +12305,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_prisma_service_prismaservice",
+      "target": "apps_server_src_ownership_service_ownershipservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11802,7 +12317,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_project_controller_projectcontroller",
+      "target": "apps_server_src_prisma_service_prismaservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -11954,6 +12469,102 @@
       "context": "import",
       "source_file": "apps/server/src/project.controller.ts",
       "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_database_testapp",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_database_testdatabase",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_agent_fixtures_definition",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_agent_fixtures_response",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_fixtures_definition",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_fixtures_readtool",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_fixtures_response",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_fixtures_toolcall",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
@@ -12610,8 +13221,45 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_auth_guard",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L16",
+      "type_only": true,
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_ownership_service",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_controller",
+      "target": "apps_server_src_project_controller",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/src/app.module.ts",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_app_module",
+      "target": "apps_server_src_agent_service",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12623,7 +13271,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_guard",
+      "target": "apps_server_src_auth_controller",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12635,7 +13283,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_auth_service",
+      "target": "apps_server_src_auth_guard",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12647,7 +13295,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_health_controller",
+      "target": "apps_server_src_auth_service",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12659,7 +13307,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_ownership_service",
+      "target": "apps_server_src_health_controller",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12671,7 +13319,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_prisma_service",
+      "target": "apps_server_src_ownership_service",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12683,7 +13331,7 @@
     },
     {
       "source": "apps_server_src_app_module",
-      "target": "apps_server_src_project_controller",
+      "target": "apps_server_src_prisma_service",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -12814,6 +13462,42 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_database",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_integration",
+      "target": "apps_server_test_agent_fixtures",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.integration.mjs",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_fixtures",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_test_auth_integration",
       "target": "apps_server_test_database",
       "relation": "imports_from",
@@ -12847,6 +13531,18 @@
       "context": "import",
       "source_file": "apps/server/test/project.integration.mjs",
       "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service_agentservice_constructor",
+      "target": "apps_server_src_ownership_service_ownershipservice",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "parameter_type",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -13091,7 +13787,7 @@
     },
     {
       "source": "agents",
-      "target": "agents_\u524d\u7aef\u7ec4\u4ef6\u89c4\u8303",
+      "target": "agents_git_\u534f\u4f5c\u89c4\u8303",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -13102,13 +13798,24 @@
     },
     {
       "source": "agents",
+      "target": "agents_\u524d\u7aef\u7ec4\u4ef6\u89c4\u8303",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "AGENTS.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "agents",
       "target": "agents_graphify",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "AGENTS.md",
-      "source_location": "L11",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -16177,7 +16884,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/server/package.json",
-      "source_location": "L26",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -16226,7 +16933,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_nestjs_common",
+      "target": "apps_server_package_dependencies_earendil_works_pi_agent_core",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16237,7 +16944,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_nestjs_core",
+      "target": "apps_server_package_dependencies_earendil_works_pi_ai",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16248,7 +16955,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_nestjs_platform_express",
+      "target": "apps_server_package_dependencies_nestjs_common",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16259,7 +16966,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_noema_shared",
+      "target": "apps_server_package_dependencies_nestjs_core",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16270,7 +16977,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_prisma_adapter_pg",
+      "target": "apps_server_package_dependencies_nestjs_platform_express",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16281,7 +16988,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_prisma_client",
+      "target": "apps_server_package_dependencies_noema_shared",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16292,7 +16999,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_reflect_metadata",
+      "target": "apps_server_package_dependencies_prisma_adapter_pg",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16303,7 +17010,7 @@
     },
     {
       "source": "apps_server_package_dependencies",
-      "target": "apps_server_package_dependencies_rxjs",
+      "target": "apps_server_package_dependencies_prisma_client",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16313,8 +17020,30 @@
       "weight": 1.0
     },
     {
-      "source": "apps_server_package_devdependencies",
-      "target": "apps_server_package_devdependencies_types_node",
+      "source": "apps_server_package_dependencies",
+      "target": "apps_server_package_dependencies_reflect_metadata",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/package.json",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_package_dependencies",
+      "target": "apps_server_package_dependencies_rxjs",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/package.json",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_package_dependencies",
+      "target": "apps_server_package_dependencies_zod",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16325,13 +17054,24 @@
     },
     {
       "source": "apps_server_package_devdependencies",
+      "target": "apps_server_package_devdependencies_types_node",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/package.json",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_package_devdependencies",
       "target": "apps_server_package_devdependencies_typescript",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/server/package.json",
-      "source_location": "L28",
+      "source_location": "L31",
       "weight": 1.0
     },
     {
@@ -16478,6 +17218,50 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_agent_service_limitsschema",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_agent_service_agentdefinition",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_agent_service_agentscope",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service",
+      "target": "apps_server_src_agent_service_agentservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_src_app_module",
       "target": "apps_server_src_app_module_appmodule",
       "relation": "contains",
@@ -16485,7 +17269,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/server/src/app.module.ts",
-      "source_location": "L21",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -16676,6 +17460,105 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_test_agent_fixtures",
+      "target": "apps_server_test_agent_fixtures_response",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_fixtures",
+      "target": "apps_server_test_agent_fixtures_model",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_fixtures",
+      "target": "apps_server_test_agent_fixtures_definition",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_fixtures",
+      "target": "apps_server_test_agent_fixtures_toolcall",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_fixtures",
+      "target": "apps_server_test_agent_fixtures_readtool",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent-fixtures.mjs",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_test_input",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_test_service",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_test_status",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_test_agent_test",
+      "target": "apps_server_test_agent_test_scope",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/test/agent.test.mjs",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_test_database",
       "target": "apps_server_test_database_root",
       "relation": "contains",
@@ -16771,7 +17654,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/server/tsconfig.json",
-      "source_location": "L17",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -16798,7 +17681,7 @@
     },
     {
       "source": "apps_server_tsconfig_compileroptions",
-      "target": "apps_server_tsconfig_compileroptions_experimentaldecorators",
+      "target": "apps_server_tsconfig_compileroptions_skiplibcheck",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16809,7 +17692,7 @@
     },
     {
       "source": "apps_server_tsconfig_compileroptions",
-      "target": "apps_server_tsconfig_compileroptions_emitdecoratormetadata",
+      "target": "apps_server_tsconfig_compileroptions_experimentaldecorators",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16820,7 +17703,7 @@
     },
     {
       "source": "apps_server_tsconfig_compileroptions",
-      "target": "apps_server_tsconfig_compileroptions_sourcemap",
+      "target": "apps_server_tsconfig_compileroptions_emitdecoratormetadata",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16831,7 +17714,7 @@
     },
     {
       "source": "apps_server_tsconfig_compileroptions",
-      "target": "apps_server_tsconfig_compileroptions_noemitonerror",
+      "target": "apps_server_tsconfig_compileroptions_sourcemap",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -16842,13 +17725,24 @@
     },
     {
       "source": "apps_server_tsconfig_compileroptions",
-      "target": "apps_server_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "target": "apps_server_tsconfig_compileroptions_noemitonerror",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/server/tsconfig.json",
       "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_tsconfig_compileroptions",
+      "target": "apps_server_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/tsconfig.json",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -16992,6 +17886,50 @@
       "confidence_score": 1.0,
       "source_file": ".claude/skills/commit-conventions/SKILL.md",
       "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_agent_runtime",
+      "target": "docs_agent_runtime_agent_\u8fd0\u884c\u57fa\u7840",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_agent_runtime_agent_\u8fd0\u884c\u57fa\u7840",
+      "target": "docs_agent_runtime_\u6267\u884c\u9650\u5236",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_agent_runtime_agent_\u8fd0\u884c\u57fa\u7840",
+      "target": "docs_agent_runtime_\u4f9d\u8d56\u4e0e\u9a8c\u8bc1",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_agent_runtime_agent_\u8fd0\u884c\u57fa\u7840",
+      "target": "docs_agent_runtime_\u8c03\u7528\u7ea6\u5b9a",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/agent-runtime.md",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -18786,6 +19724,28 @@
       "weight": 1.0
     },
     {
+      "source": "apps_server_src_agent_service_agentservice",
+      "target": "apps_server_src_agent_service_agentservice_constructor",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service_agentservice",
+      "target": "apps_server_src_agent_service_agentservice_run",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
       "source": "apps_server_src_auth_controller_authcontroller",
       "target": "apps_server_src_auth_controller_authcontroller_register",
       "relation": "method",
@@ -19182,6 +20142,17 @@
       "weight": 1.0
     },
     {
+      "source": "docs_readme",
+      "target": "docs_agent_runtime",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/README.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
       "source": "prisma_migrations_20261103010000_auth_ownership_migration_session",
       "target": "prisma_migrations_20261103010000_auth_ownership_migration_user",
       "relation": "references",
@@ -19256,6 +20227,18 @@
       "confidence_score": 1.0,
       "source_file": "prisma/migrations/20261103000000_init/migration.sql",
       "source_location": "L272",
+      "weight": 1.0
+    },
+    {
+      "source": "apps_server_src_agent_service_agentservice_run",
+      "target": "apps_server_src_ownership_service_ownershipservice_assertowned",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "context": "call",
+      "source_file": "apps/server/src/agent.service.ts",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -19425,8 +20408,20 @@
       "source_file": "apps/server/src/project.controller.ts",
       "source_location": "L73",
       "weight": 1.0
+    },
+    {
+      "source": "apps_desktop_src_renderer_src_app_workspace_save",
+      "target": "apps_server_test_agent_test_status",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "collection",
+      "source_file": "apps/desktop/src/renderer/src/App.tsx",
+      "source_location": "L464",
+      "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "537a54e268248844c8eea3c7a267def205fa504d"
+  "built_at_commit": "40d9740a178908da5166528352855eacf5577b5b"
 }

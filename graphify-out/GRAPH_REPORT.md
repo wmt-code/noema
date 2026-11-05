@@ -1,21 +1,21 @@
 # Graph Report - noema  (2026-11-05)
 
 ## Corpus Check
-- 77 files · ~237,137 words
+- 82 files · ~239,377 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 714 nodes · 979 edges · 54 communities (42 shown, 7 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.8)
+- 747 nodes · 1032 edges · 55 communities (44 shown, 6 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `537a54e2`
+- Built from commit: `40d9740a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- AuthRequest
+- app.module.ts
 - 第一阶段开发步骤
 - dependencies
 - dependencies
@@ -64,13 +64,14 @@
 - alert.tsx
 - AGENTS.md
 - badge.tsx
+- AuthRequest
 
 ## God Nodes (most connected - your core abstractions)
 1. `scripts` - 20 edges
-2. `AuthRequest` - 17 edges
+2. `AuthRequest` - 19 edges
 3. `compilerOptions` - 15 edges
-4. `ProjectController` - 14 edges
-5. `compilerOptions` - 14 edges
+4. `compilerOptions` - 15 edges
+5. `ProjectController` - 14 edges
 6. `AI 真人短剧创作平台 — Engineering Plan` - 14 edges
 7. `AuthService` - 13 edges
 8. `compilerOptions` - 13 edges
@@ -86,25 +87,25 @@
   apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/components/ui/sidebar.tsx
 - `logout()` --calls--> `request()`  [EXTRACTED]
   apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/lib/api.ts
-- `Workspace()` --calls--> `request()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/lib/api.ts
+- `save()` --indirect_call--> `status()`  [INFERRED]
+  apps/desktop/src/renderer/src/App.tsx → apps/server/test/agent.test.mjs
 
 ## Import Cycles
 - None detected.
 
-## Communities (54 total, 7 thin omitted)
+## Communities (55 total, 6 thin omitted)
 
-### Community 0 - "AuthRequest"
+### Community 0 - "app.module.ts"
 Cohesion: 0.06
-Nodes (40): AppModule, AuthController, Response, Body, Controller, Get, HttpCode, Post (+32 more)
+Nodes (33): AgentDefinition, AgentScope, AgentService, limitsSchema, Injectable, AppModule, AuthController, Response (+25 more)
 
 ### Community 1 - "第一阶段开发步骤"
 Cohesion: 0.05
-Nodes (34): Noema 桌面端, 功能, 启动, 桌面边界, 检查, Noema Server, 开发与验证, 环境与接口 (+26 more)
+Nodes (38): Noema 桌面端, 功能, 启动, 桌面边界, 检查, Noema Server, 开发与验证, 环境与接口 (+30 more)
 
 ### Community 2 - "dependencies"
-Cohesion: 0.06
-Nodes (35): dependencies, @nestjs/common, @nestjs/core, @nestjs/platform-express, @noema/shared, @prisma/adapter-pg, @prisma/client, reflect-metadata (+27 more)
+Cohesion: 0.05
+Nodes (41): dependencies, @earendil-works/pi-agent-core, @earendil-works/pi-ai, @nestjs/common, @nestjs/core, @nestjs/platform-express, @noema/shared, @prisma/adapter-pg (+33 more)
 
 ### Community 3 - "dependencies"
 Cohesion: 0.06
@@ -119,8 +120,8 @@ Cohesion: 0.12
 Nodes (19): forgetSession(), handleRequest(), HttpError, perform(), restoreSession(), send(), serviceUrl(), sessionFile() (+11 more)
 
 ### Community 6 - "Workspace"
-Cohesion: 0.23
-Nodes (9): date(), Workspace(), logout(), openEditor(), projectMenu(), save(), selectProject(), ApiError (+1 more)
+Cohesion: 0.21
+Nodes (10): date(), Workspace(), logout(), openEditor(), projectMenu(), save(), selectProject(), ApiError (+2 more)
 
 ### Community 7 - "devDependencies"
 Cohesion: 0.08
@@ -131,8 +132,8 @@ Cohesion: 0.06
 Nodes (30): Sheet(), SheetContent(), SheetDescription(), SheetHeader(), SheetTitle(), Sidebar(), SidebarContent(), SidebarContext (+22 more)
 
 ### Community 9 - "compilerOptions"
-Cohesion: 0.11
-Nodes (18): compilerOptions, emitDecoratorMetadata, experimentalDecorators, forceConsistentCasingInFileNames, lib, module, moduleResolution, noEmitOnError (+10 more)
+Cohesion: 0.10
+Nodes (19): compilerOptions, emitDecoratorMetadata, experimentalDecorators, forceConsistentCasingInFileNames, lib, module, moduleResolution, noEmitOnError (+11 more)
 
 ### Community 10 - "components.json"
 Cohesion: 0.11
@@ -151,8 +152,8 @@ Cohesion: 0.14
 Nodes (13): compilerOptions, jsx, lib, types, extends, include, DOM, ES2022 (+5 more)
 
 ### Community 14 - "database.mjs"
-Cohesion: 0.20
-Nodes (7): appDirectory, deploy(), prismaCli, require, root, testApp(), testDatabase()
+Cohesion: 0.13
+Nodes (14): appDirectory, definition(), model, readTool(), response(), toolCall(), input, scope (+6 more)
 
 ### Community 15 - "include"
 Cohesion: 0.13
@@ -262,25 +263,33 @@ Nodes (5): App(), Auth(), submit(), message(), root
 Cohesion: 0.50
 Nodes (3): Alert(), AlertDescription(), alertVariants
 
+### Community 52 - "AGENTS.md"
+Cohesion: 0.50
+Nodes (3): Git 协作规范, Graphify, 前端组件规范
+
+### Community 54 - "AuthRequest"
+Cohesion: 0.26
+Nodes (12): AuthRequest, parse(), ProjectController, Body, Controller, Get, HttpCode, Post (+4 more)
+
 ## Knowledge Gaps
-- **274 isolated node(s):** `semi`, `singleQuote`, `trailingComma`, `endOfLine`, `$schema` (+269 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 362 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **286 isolated node(s):** `semi`, `singleQuote`, `trailingComma`, `endOfLine`, `$schema` (+281 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 376 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AI 真人短剧创作平台 — Engineering Plan` connect `AI 真人短剧创作平台 — Engineering Plan` to `第一阶段开发步骤`, `1. 项目目标`, `4. 数据模型`, `8. API 与事件契约`, `3. 业务模块设计`, `11. 实施计划`, `6. AI 生成任务设计`, `2. 技术架构`, `5. Agent 设计`, `7. 质量审核设计`, `9. 桌面端工程设计`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `status()` connect `Workspace` to `database.mjs`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Why does `Workspace()` connect `Workspace` to `sidebar.tsx`, `App`, `App.tsx`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `devDependencies` to `dependencies`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `semi`, `singleQuote`, `trailingComma` to the rest of the system?**
-  _274 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `AuthRequest` be split into smaller, more focused modules?**
-  _Cohesion score 0.06037000973709834 - nodes in this community are weakly interconnected._
+  _286 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `app.module.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.060515873015873016 - nodes in this community are weakly interconnected._
 - **Should `第一阶段开发步骤` be split into smaller, more focused modules?**
-  _Cohesion score 0.0524390243902439 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0463768115942029 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
-  _Cohesion score 0.05555555555555555 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
+- **Should `dependencies` be split into smaller, more focused modules?**
+  _Cohesion score 0.06060606060606061 - nodes in this community are weakly interconnected._
