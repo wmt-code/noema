@@ -56,3 +56,26 @@ corepack pnpm --filter @noema/server dev
 ```
 
 这是存活检查，表示服务能处理 HTTP 请求；不代表数据库、Redis 或其他外部依赖就绪。Prisma 延迟到首次查询时建立连接，服务启动不强制探测数据库；缺少 `DATABASE_URL` 时启动失败。`PrismaService` 通过 Nest 注入和管理，在应用关闭时释放连接池。未知路由返回 `404`。启动失败会输出错误并以非零状态退出，启用 Nest 关闭钩子以响应退出信号。
+
+## 认证与业务 API
+
+除 `/health`、`POST /auth/register`、`POST /auth/login` 外，所有路由都需要 `Authorization: Bearer <token>`，令牌来自登录响应，7 天有效；`POST /auth/logout` 注销当前会话。注册与登录按来源 IP 限流。请求与响应体由 `@noema/shared` 的校验函数约束。
+
+| 方法     | 路径                            | 说明                                                                   |
+| -------- | ------------------------------- | ---------------------------------------------------------------------- |
+| `POST`   | `/auth/register`                | 注册，返回 `{ id, email }`；重复邮箱返回 `409`                         |
+| `POST`   | `/auth/login`                   | 登录，返回 `accessToken`、`expiresAt` 与用户信息                       |
+| `GET`    | `/auth/me`                      | 当前用户                                                               |
+| `POST`   | `/auth/logout`                  | 注销当前会话，返回 `204`                                               |
+| `POST`   | `/projects`                     | 创建项目，`{ name, settings? }`                                        |
+| `GET`    | `/projects`                     | 当前用户的项目，按创建时间倒序                                         |
+| `GET`    | `/projects/:id`                 | 项目详情                                                               |
+| `PATCH`  | `/projects/:id`                 | 修改 `{ name?, settings? }`，至少一项                                  |
+| `DELETE` | `/projects/:id`                 | 删除项目并级联删除剧集，返回 `204`                                     |
+| `POST`   | `/projects/:projectId/episodes` | 创建剧集，`{ title, status? }`，状态默认 `DRAFT`                       |
+| `GET`    | `/projects/:projectId/episodes` | 剧集列表，按创建时间正序                                               |
+| `GET`    | `/episodes/:id`                 | 剧集详情                                                               |
+| `PATCH`  | `/episodes/:id`                 | 修改 `{ title?, status? }`，状态取 `DRAFT`、`IN_PROGRESS`、`COMPLETED` |
+| `DELETE` | `/episodes/:id`                 | 删除剧集，返回 `204`                                                   |
+
+校验失败返回 `400`；未认证返回 `401`；资源不存在或属于其他用户时统一返回 `404`，不区分两种情况。

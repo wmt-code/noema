@@ -6,9 +6,10 @@ import { AuthService } from './auth.service.js'
 import { HealthController } from './health.controller.js'
 import { OwnershipService } from './ownership.service.js'
 import { PrismaService } from './prisma.service.js'
+import { ProjectController } from './project.controller.js'
 
 @Module({
-  controllers: [HealthController, AuthController],
+  controllers: [HealthController, AuthController, ProjectController],
   providers: [
     PrismaService,
     AuthService,

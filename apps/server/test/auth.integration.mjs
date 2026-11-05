@@ -1,11 +1,8 @@
-import 'reflect-metadata'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { test } from 'node:test'
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from '../dist/app.module.js'
 import { OwnershipService } from '../dist/ownership.service.js'
-import { deploy, testDatabase } from './database.mjs'
+import { testApp, testDatabase } from './database.mjs'
 
 const PASSWORD = 'a-very-secure-passphrase'
 
@@ -14,12 +11,7 @@ test(
   { timeout: 60000 },
   async (t) => {
     const { prisma, url } = await testDatabase(t)
-    await deploy(url.toString())
-    process.env.DATABASE_URL = url
-    const app = await NestFactory.create(AppModule, { logger: false })
-    t.after(() => app.close())
-    await app.listen(0, '127.0.0.1')
-    const base = await app.getUrl()
+    const base = await testApp(t, url)
     const bearer = (token) => ({ authorization: `Bearer ${token}` })
     const post = (path, body, headers = {}) =>
       fetch(`${base}${path}`, {
@@ -166,7 +158,7 @@ test(
         const episode = await prisma.episode.create({
           data: { projectId: project.id, title: '第一集' }
         })
-        const ownership = app.get(OwnershipService)
+        const ownership = new OwnershipService(prisma)
 
         await ownership.assertOwned(user.id, 'project', project.id)
         await ownership.assertOwned(user.id, 'episode', episode.id)

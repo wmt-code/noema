@@ -1,10 +1,13 @@
+import 'reflect-metadata'
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
+import { NestFactory } from '@nestjs/core'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../dist/generated/prisma/client.js'
+import { AppModule } from '../dist/app.module.js'
 
 const root = fileURLToPath(new URL('../../../', import.meta.url))
 const require = createRequire(new URL('../../../package.json', import.meta.url))
@@ -26,6 +29,15 @@ export function deploy(url) {
       else reject(new Error(`Migration failed (${code}): ${output}`))
     })
   })
+}
+
+export async function testApp(t, url) {
+  await deploy(url.toString())
+  process.env.DATABASE_URL = url
+  const app = await NestFactory.create(AppModule, { logger: false })
+  t.after(() => app.close())
+  await app.listen(0, '127.0.0.1')
+  return app.getUrl()
 }
 
 export async function testDatabase(t) {
