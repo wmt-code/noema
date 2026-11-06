@@ -11,7 +11,7 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
     mql.addEventListener('change', onChange)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Preserve the upstream shadcn initial viewport synchronization.
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Keep the official hook in sync with the initial viewport.
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     return () => mql.removeEventListener('change', onChange)
   }, [])

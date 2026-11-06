@@ -54,7 +54,7 @@ try {
   await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
   assert.equal(
     await page
-      .locator('.auth-art')
+      .locator('.brand-mark')
       .evaluate((image) => image.complete && image.naturalWidth > 0),
     true
   )
