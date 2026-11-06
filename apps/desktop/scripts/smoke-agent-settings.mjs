@@ -76,6 +76,10 @@ test(
       accessToken
     )
     const originalFetch = globalThis.fetch
+    const code = 'const title = "灯塔";'
+    const markdown = ['## 场景', '- **海边**', '', '```js', code, '```'].join(
+      '\n'
+    )
     const payloads = []
     const gate = Promise.withResolvers()
     const buffered = Promise.withResolvers()
@@ -125,7 +129,8 @@ test(
           if (i === 1) await gate.promise
           if (i === 6) await buffered.promise
           if (i === 7) await cancelled.promise
-          c.enqueue(chunk({ content: '回复' + i }, 'stop'))
+          const end = '回复' + i + (i === 1 ? '\n\n' + markdown : '')
+          c.enqueue(chunk({ content: end }, 'stop'))
           c.close()
         }
       })
@@ -217,6 +222,26 @@ test(
       gate.resolve()
       await page.getByText('第一段回复1', { exact: true }).waitFor()
       await completed(2)
+      const reply = page.locator('[data-role="assistant"]').last()
+      await reply.getByRole('button', { name: '复制', exact: true }).click()
+      await reply.locator('button[data-copied="true"]').waitFor()
+      await composer.press('ControlOrMeta+v')
+      assert.equal(await composer.inputValue(), '第一段回复1\n\n' + markdown)
+      await composer.fill('')
+      const codeCopy = reply.locator('.aui-code-header-root button')
+      await codeCopy.click()
+      await codeCopy.locator('.lucide-check').waitFor()
+      await composer.press('ControlOrMeta+v')
+      assert.equal((await composer.inputValue()).trimEnd(), code)
+      await composer.fill('')
+      assert.equal(
+        await page.evaluate(
+          async () =>
+            (await navigator.permissions.query({ name: 'clipboard-read' }))
+              .state
+        ),
+        'denied'
+      )
       await click('新建对话')
       await send('同一个项目的主角是谁？')
       await page.getByText('第一段回复2', { exact: true }).waitFor()

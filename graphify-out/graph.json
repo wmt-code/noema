@@ -1388,7 +1388,7 @@
       "file_type": "code",
       "norm_label": "start()",
       "source_file": "apps/desktop/scripts/smoke-agent-settings.mjs",
-      "source_location": "L122"
+      "source_location": "L126"
     },
     {
       "id": "apps_desktop_scripts_smoke_projects_after",
@@ -3788,7 +3788,7 @@
       "file_type": "code",
       "norm_label": "createwindow()",
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L19"
+      "source_location": "L25"
     },
     {
       "id": "apps_desktop_src_renderer_src_agent_chat_runtime_chatruntime",
@@ -19160,7 +19160,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L4",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -19172,7 +19172,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L4",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -19184,7 +19184,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L4",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -24357,7 +24357,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L4",
+      "source_location": "L10",
       "weight": 1.0
     },
     {
@@ -28281,7 +28281,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/desktop/scripts/smoke-agent-settings.mjs",
-      "source_location": "L122",
+      "source_location": "L126",
       "weight": 1.0
     },
     {
@@ -28479,7 +28479,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "apps/desktop/src/main/index.ts",
-      "source_location": "L19",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -38553,5 +38553,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9cb37864ad6b1bdf7618ffae7b1a29052442d776"
+  "built_at_commit": "d4b3f985bcd1e9b90aff2f3539db08ddf2ce9b29"
 }

@@ -1,4 +1,10 @@
-import { app, BrowserWindow, ipcMain, protocol } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  protocol,
+  type WebContents
+} from 'electron'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { chatStream, handleRequest, restoreSession } from './api'
@@ -54,18 +60,28 @@ async function createWindow(): Promise<void> {
       event.preventDefault()
   })
   window.webContents.on('will-redirect', (event) => event.preventDefault())
+  const rendererUrl =
+    url?.href ??
+    pathToFileURL(join(import.meta.dirname, '../renderer/index.html')).href
+  const canWriteClipboard = (
+    contents: WebContents | null,
+    permission: string,
+    frame: { isMainFrame: boolean; requestingUrl?: string }
+  ) =>
+    permission === 'clipboard-sanitized-write' &&
+    contents === window.webContents &&
+    frame.isMainFrame &&
+    frame.requestingUrl === rendererUrl
   window.webContents.session.setPermissionRequestHandler(
-    (_contents, _permission, callback) => {
-      callback(false)
-    }
+    (contents, permission, callback, frame) =>
+      callback(canWriteClipboard(contents, permission, frame))
   )
-  window.webContents.session.setPermissionCheckHandler(() => false)
+  window.webContents.session.setPermissionCheckHandler(
+    (contents, permission, _origin, frame) =>
+      canWriteClipboard(contents, permission, frame)
+  )
 
-  if (url) {
-    await window.loadURL(url.href)
-  } else {
-    await window.loadFile(join(import.meta.dirname, '../renderer/index.html'))
-  }
+  await window.loadURL(rendererUrl)
 }
 
 app
