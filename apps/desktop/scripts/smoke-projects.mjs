@@ -560,14 +560,27 @@ test(
     assert.equal(await restartedBackend.getUrl(), base)
     page = await launch()
     await main()
-      .getByRole('heading', { name: '我的项目', exact: true })
-      .waitFor()
-    await main()
-      .getByRole('button', { name: renamedProject, exact: true })
-      .click()
-    await main()
       .getByRole('heading', { name: renamedProject, exact: true })
       .waitFor()
+    // A newer project from another session must not replace the open project on refresh.
+    const otherProject = await prisma.project.create({
+      data: { ownerId: owner.id, name: '另一个会话创建的项目' }
+    })
+    await main().getByRole('button', { name: '刷新列表' }).click()
+    await main()
+      .getByRole('button', { name: otherProject.name, exact: true })
+      .waitFor()
+    assert.equal(
+      await main()
+        .getByRole('button', { name: renamedProject, exact: true })
+        .getAttribute('aria-pressed'),
+      'true'
+    )
+    await prisma.project.delete({ where: { id: otherProject.id } })
+    await main().getByRole('button', { name: '刷新列表' }).click()
+    await main()
+      .getByRole('button', { name: otherProject.name, exact: true })
+      .waitFor({ state: 'detached' })
     await row(editedTitle)
       .getByText('已完成', { exact: true })
       .filter({ visible: true })

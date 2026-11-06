@@ -244,12 +244,12 @@ function Auth({ onLogin }: { onLogin: (user: User) => void }) {
 type Editor =
   | { mode: 'create-project' }
   | { mode: 'rename-project' | 'delete-project'; project: Project }
-  | { mode: 'create-episode' }
+  | { mode: 'create-episode'; projectId: string }
   | { mode: 'edit-episode' | 'delete-episode'; episode: Episode }
 
 function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [projects, setProjects] = useState<Project[]>([])
-  const [requestedId, setProjectId] = useState<string | null>(null)
+  const [projectId, setProjectId] = useState<string | null>(null)
   const [rawEpisodes, setEpisodes] = useState<Episode[] | null>(null)
   const [loadedProjectId, setLoadedProjectId] = useState<string | null>(null)
   const [projectQuery, setProjectQuery] = useState('')
@@ -273,9 +273,7 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   useEffect(() => {
     if (!isMobile) setOpenMobile(false)
   }, [isMobile, setOpenMobile])
-  const project =
-    projects.find((item) => item.id === requestedId) ?? projects[0]
-  const projectId = project?.id ?? null
+  const project = projects.find((item) => item.id === projectId)
   const episodes = loadedProjectId === projectId ? rawEpisodes : null
 
   const handleError = useCallback(
@@ -292,6 +290,11 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
       (items) => {
         if (active) {
           setProjects(items)
+          setProjectId((selected) =>
+            items.some((item) => item.id === selected)
+              ? selected
+              : (items[0]?.id ?? null)
+          )
           setLoading(false)
         }
       },
@@ -330,8 +333,9 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   function selectProject(id: string | null) {
     setOpenMobile(false)
     setDetailsOpen(!!id && window.innerWidth < 1024)
-    setProjectId(id)
-    if ((id ?? projects[0]?.id ?? null) === projectId) return
+    const nextId = id ?? projects[0]?.id ?? null
+    setProjectId(nextId)
+    if (nextId === projectId) return
     setEpisodes(null)
     setEpisodeError('')
     setQuery('')
@@ -409,7 +413,9 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
             items.filter((value) => value.id !== editor.project.id)
           )
           if (projectId === editor.project.id) {
-            setProjectId(null)
+            setProjectId(
+              projects.find((item) => item.id !== editor.project.id)?.id ?? null
+            )
             setDetailsOpen(false)
             setQuery('')
             setFilter('ALL')
@@ -417,13 +423,12 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
           }
           break
         case 'create-episode': {
-          if (!projectId) return
-          const item = await request<Episode>({
+          await request<Episode>({
             type: 'episodes:create',
-            projectId,
+            projectId: editor.projectId,
             input: { title: name, status }
           })
-          setEpisodes((items) => [...(items ?? []), item])
+          reloadEpisodes()
           setQuery('')
           setFilter('ALL')
           break
@@ -529,7 +534,9 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
         <Button
           size="sm"
           disabled={episodes === null || !!episodeError}
-          onClick={() => openEditor({ mode: 'create-episode' })}
+          onClick={() =>
+            openEditor({ mode: 'create-episode', projectId: project.id })
+          }
         >
           <Plus />
           新建剧集
