@@ -6,7 +6,9 @@ export type ProjectPatch = { name?: string; settings?: Record<string, unknown> }
 export type EpisodeCreate = { title: string; status?: EpisodeStatus }
 export type EpisodePatch = { title?: string; status?: EpisodeStatus }
 
-export class ValidationError extends Error {}
+export * from './chat-attachments.js'
+export { ValidationError } from './validation.js'
+import { ValidationError } from './validation.js'
 
 function fields(
   body: unknown,

@@ -3,7 +3,15 @@ import {
   type AgentTool,
   type StreamFn
 } from '@earendil-works/pi-agent-core'
-import type { Api, Model } from '@earendil-works/pi-ai'
+import {
+  contentText,
+  isContextOverflow,
+  type Api,
+  type Model,
+  type ImageContent,
+  type Message,
+  type ModelThinkingLevel
+} from '@earendil-works/pi-ai'
 import {
   BadGatewayException,
   BadRequestException,
@@ -16,7 +24,7 @@ import { z } from 'zod'
 import type { AuthRequest } from './auth.guard.js'
 import { OwnershipService, type Resource } from './ownership.service.js'
 
-const limitsSchema = z.strictObject({
+export const agentLimitsSchema = z.strictObject({
   timeoutMs: z.number().int().min(1).max(300_000).default(60_000),
   maxTurns: z.number().int().min(1).max(20).default(4),
   maxToolCalls: z.number().int().min(0).max(50).default(8),
@@ -31,10 +39,16 @@ export interface AgentDefinition<Input, Output> {
   streamFn: StreamFn
   inputSchema: z.ZodType<Input>
   outputSchema: z.ZodType<Output>
+  outputFormat?: 'text' | 'json'
+  images?: ImageContent[]
+  thinkingLevel?: ModelThinkingLevel
+  history?: Message[]
+  onDelta?: (type: 'text' | 'reasoning', delta: string) => void
+  attachmentText?: string
   prompt: (input: Input) => string
   /** Read-only tools scoped to this caller; persist only after run() succeeds. */
   tools?: AgentTool[]
-  limits?: z.input<typeof limitsSchema>
+  limits?: z.input<typeof agentLimitsSchema>
 }
 
 export interface AgentScope {
@@ -62,7 +76,7 @@ export class AgentService {
     )
     const parsed = definition.inputSchema.safeParse(input)
     if (!parsed.success) throw new BadRequestException('Invalid agent input')
-    const limits = limitsSchema.parse(definition.limits ?? {})
+    const limits = agentLimitsSchema.parse(definition.limits ?? {})
     const prompt = definition.prompt(parsed.data)
     if (Buffer.byteLength(prompt, 'utf8') > 65_536) {
       throw new BadRequestException('Agent input exceeds size limit')
@@ -89,7 +103,8 @@ export class AgentService {
         systemPrompt: definition.systemPrompt,
         model: definition.model,
         tools: definition.tools ?? [],
-        thinkingLevel: 'off'
+        messages: definition.history ?? [],
+        thinkingLevel: definition.thinkingLevel ?? 'off'
       },
       streamFn: (model, context, options) =>
         definition.streamFn(model, context, {
@@ -113,6 +128,12 @@ export class AgentService {
       }
     })
     const unsubscribe = agent.subscribe((event) => {
+      if (event.type === 'message_update') {
+        const part = event.assistantMessageEvent
+        if (part.type === 'text_delta') definition.onDelta?.('text', part.delta)
+        if (part.type === 'thinking_delta')
+          definition.onDelta?.('reasoning', part.delta)
+      }
       if (event.type === 'tool_execution_end' && event.isError) {
         fail(new BadGatewayException('Agent tool failed'))
       }
@@ -136,22 +157,45 @@ export class AgentService {
       limits.timeoutMs
     )
     try {
-      await Promise.race([agent.prompt(prompt), interrupted])
+      const content = [prompt, definition.attachmentText]
+        .filter(Boolean)
+        .join('\n\n')
+      await Promise.race([
+        definition.outputFormat === 'text' && !definition.images?.length
+          ? agent.prompt({ role: 'user', content, timestamp: Date.now() })
+          : agent.prompt(content, definition.images),
+        interrupted
+      ])
       if (failure) throw failure
       const last = agent.state.messages.at(-1)
-      if (last?.role !== 'assistant' || last.stopReason !== 'stop') {
-        throw new BadGatewayException('Agent did not complete successfully')
+      if (last?.role !== 'assistant')
+        throw new BadGatewayException('模型没有返回助手消息。')
+      if (last.stopReason !== 'stop') {
+        if (isContextOverflow(last))
+          throw new BadGatewayException(
+            '对话超出模型的上下文长度，请缩短消息或减少附件。'
+          )
+        if (last.stopReason === 'length')
+          throw new BadGatewayException(
+            '模型已达到输出上限，请提高输出 Token 上限或缩短问题。'
+          )
+        // Pi's upstream error body can contain secrets. Preserve only its HTTP status.
+        const status = /^(\d{3})(?:\s|:|$)/.exec(last.errorMessage ?? '')?.[1]
+        throw new BadGatewayException(
+          status
+            ? '模型服务商返回 HTTP ' + status + '。'
+            : '模型服务未返回完整回复。'
+        )
       }
       if (last.content.some((part) => part.type === 'toolCall')) {
         throw new BadGatewayException('Agent returned unfinished tool calls')
       }
-      const text = last.content
-        .filter((part) => part.type === 'text')
-        .map((part) => part.text)
-        .join('')
+      const text = contentText(last.content, '')
+      if (definition.outputFormat === 'text' && !text.trim())
+        throw new BadGatewayException('服务商结束了回复，但没有返回正文。')
       let value: unknown
       try {
-        value = JSON.parse(text)
+        value = definition.outputFormat === 'text' ? text : JSON.parse(text)
       } catch {
         throw new BadGatewayException('Agent output is not valid JSON')
       }

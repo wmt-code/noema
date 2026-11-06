@@ -57,13 +57,16 @@ enum ExportStatus {
 }
 
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique
-  passwordHash String
-  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
-  sessions     Session[]
-  projects     Project[]
-  assets       Asset[]
+  id               String            @id @default(uuid()) @db.Uuid
+  email            String            @unique
+  passwordHash     String
+  createdAt        DateTime          @default(now()) @db.Timestamptz(3)
+  sessions         Session[]
+  projects         Project[]
+  assets           Asset[]
+  modelCredentials ModelCredential[]
+  chatThreads      ChatThread[]
+  chatConfig       Json?
 }
 
 model Session {
@@ -79,17 +82,37 @@ model Session {
 }
 
 model Project {
-  id         String      @id @default(uuid()) @db.Uuid
-  ownerId    String      @db.Uuid
-  owner      User        @relation(fields: [ownerId], references: [id], onDelete: Restrict)
-  name       String
-  settings   Json        @default("{}")
-  createdAt  DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime    @updatedAt @db.Timestamptz(3)
-  episodes   Episode[]
-  characters Character[]
+  id          String       @id @default(uuid()) @db.Uuid
+  ownerId     String       @db.Uuid
+  owner       User         @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  name        String
+  settings    Json         @default("{}")
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(3)
+  episodes    Episode[]
+  characters  Character[]
+  agentConfig AgentConfig?
+  chatThreads ChatThread[]
 
   @@index([ownerId])
+}
+
+model AgentConfig {
+  projectId String   @id @db.Uuid
+  config    Json
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ModelCredential {
+  userId       String   @db.Uuid
+  provider     String
+  encryptedKey String
+  baseUrl      String?
+  updatedAt    DateTime @updatedAt @db.Timestamptz(3)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, provider])
 }
 
 model Episode {
@@ -100,6 +123,7 @@ model Episode {
   createdAt       DateTime         @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime         @updatedAt @db.Timestamptz(3)
   project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  chatThreads     ChatThread[]
   scriptRevisions ScriptRevision[]
   scenes          Scene[]
   exports         ExportRecord[]
@@ -241,4 +265,36 @@ model ExportRecord {
   episode    Episode      @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
   @@index([episodeId])
+}
+
+// assistant-ui custom persistence schema, scoped to Noema accounts and projects.
+model ChatThread {
+  id        String        @id @default(uuid()) @db.Uuid
+  userId    String        @db.Uuid
+  projectId String?       @db.Uuid
+  episodeId String?       @db.Uuid
+  title     String        @default("新对话")
+  archived  Boolean       @default(false)
+  createdAt DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime      @updatedAt @db.Timestamptz(3)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project   Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  episode   Episode?      @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+
+  @@index([userId, projectId, updatedAt])
+  @@index([episodeId])
+}
+
+model ChatMessage {
+  threadId   String     @db.Uuid
+  id         String
+  parentId   String?
+  content    Json
+  recallText String
+  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+  thread     ChatThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@id([threadId, id])
+  @@index([threadId, createdAt])
 }

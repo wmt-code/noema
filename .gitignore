@@ -11,6 +11,7 @@ coverage/
 apps/server/src/generated/
 
 # Local configuration
+.data/
 .env
 .env.*
 !.env.example

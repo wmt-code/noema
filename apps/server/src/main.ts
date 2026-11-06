@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import { NestFactory } from '@nestjs/core'
+import { configureChatBodyParser } from './agent-attachments.js'
 import { AppModule } from './app.module.js'
 
 async function bootstrap(): Promise<void> {
@@ -10,6 +11,7 @@ async function bootstrap(): Promise<void> {
   }
 
   const app = await NestFactory.create(AppModule, { abortOnError: false })
+  configureChatBodyParser(app)
   app.enableShutdownHooks()
   try {
     await app.listen(port, '127.0.0.1')

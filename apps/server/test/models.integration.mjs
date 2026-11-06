@@ -20,11 +20,14 @@ test(
         await deploy(url.toString())
         assert.equal(await prisma.project.count(), 0)
         const migrations = await prisma.$queryRawUnsafe(
-          `SELECT migration_name FROM "${schema}"."_prisma_migrations" WHERE finished_at IS NOT NULL`
+          `SELECT migration_name FROM "${schema}"."_prisma_migrations" WHERE finished_at IS NOT NULL ORDER BY migration_name`
         )
         assert.deepEqual(migrations, [
           { migration_name: '20261103000000_init' },
-          { migration_name: '20261103010000_auth_ownership' }
+          { migration_name: '20261103010000_auth_ownership' },
+          { migration_name: '20261105093000_agent_configuration' },
+          { migration_name: '20261106120000_compatible_model_endpoint' },
+          { migration_name: '20261106165000_chat_history' }
         ])
       }
     )

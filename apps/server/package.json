@@ -7,7 +7,7 @@
     "dev": "corepack pnpm --filter @noema/shared build && corepack pnpm db:generate && node --watch --watch-path=src --watch-path=tsconfig.json scripts/dev.mjs",
     "db:generate": "corepack pnpm --dir ../.. db:generate",
     "db:check": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/prisma.integration.mjs",
-    "db:test": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/models.integration.mjs test/auth.integration.mjs test/project.integration.mjs test/agent.integration.mjs",
+    "db:test": "corepack pnpm build && node --env-file-if-exists=../../.env --test test/models.integration.mjs test/auth.integration.mjs test/project.integration.mjs test/agent.integration.mjs test/agent-api.integration.mjs",
     "typecheck": "corepack pnpm --filter @noema/shared build && corepack pnpm db:generate && tsc --noEmit",
     "build": "corepack pnpm --filter @noema/shared build && corepack pnpm db:generate && tsc",
     "start": "node --env-file-if-exists=../../.env dist/main.js",
@@ -22,8 +22,11 @@
     "@noema/shared": "workspace:*",
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
+    "assistant-stream": "0.3.55",
+    "ipaddr.js": "2.2.0",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2",
+    "undici": "7.30.1",
     "zod": "4.6.7"
   },
   "devDependencies": {
