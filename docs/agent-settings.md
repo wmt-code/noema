@@ -12,6 +12,8 @@
 
 消息及附件随会话保存在 PostgreSQL。追问使用当前分支最近 24 条消息，并按上下文预算裁剪。同一项目的其他会话自动提供最近及与当前问题匹配的文字摘录，每类最多 8 条，每条最多 700 字。独立对话仅使用本会话的历史。
 
+联网搜索默认关闭。在「模型设置 → 账号密钥」选择「Tavily 联网搜索」并保存自己的 API 密钥，再到当前对话的「对话模型」打开「联网搜索」并保存。项目与独立对话分别设置开关，剧集沿用项目设置。支持工具调用的模型可以按需生成搜索词，Pi 通过 Tavily 搜索并把最多五条网页摘要和链接交给模型。点击回复中的来源链接可在系统浏览器查看原文。[Tavily 官方 SDK](https://github.com/tavily-ai/tavily-js)
+
 在「对话模型」可切换流式显示和思考级别。内置模型使用 Pi 返回的可选级别。兼容网关的推理强度依赖供应商支持，默认关闭。聊天可上传 TXT、MD、CSV、JSON、PNG、JPEG 和 WebP，每条最多 3 个文件，总计 2 MiB，其中文本文档共 64 KiB。图片需要支持视觉输入的模型。
 
 会话、会话列表、附件、Markdown 和思考折叠组件直接取自 [assistant-ui 官方源码](https://github.com/assistant-ui/assistant-ui/tree/3a61e1df350c02fd38c460f3f186f324bd907d9e/packages/ui/src/components/react/assistant-ui/elements)。桌面端通过官方 LocalRuntime、RemoteThreadListAdapter 和 ThreadHistoryAdapter 对接 Noema 登录与数据库，服务端将 Pi 的事件交给 assistant-stream 编码。MIT 许可随桌面端分发。设置面板和模型选择器来自 [shadcn/ui](https://github.com/shadcn-ui/ui/tree/8a3536678a528cc012b9e62484290e79d0be410f)。
@@ -54,7 +56,7 @@
 }
 ```
 
-`tools` 和 `limits` 可省略，分别默认为无工具和运行基础的默认限制。只允许 `read_context`，工具不接受参数，每次执行重新检查归属，只返回当前项目名称或当前剧集及所属项目名称，不读取配置、密钥或其他项目。请求中的额外字段、任意工具、项目配置中的供应商地址和未知官方模型均被拒绝。兼容网关的地址仅随对应账号密钥保存。
+`tools` 默认为空，可启用 `read_context` 和 `web_search`。`read_context` 每次执行时检查资源归属，然后读取当前项目或剧集名称与编号。`web_search` 使用当前账号的 Tavily 密钥，仅向搜索服务发送模型生成的搜索词和搜索选项。`limits` 可省略，沿用默认运行限制。兼容网关的地址随对应账号密钥保存。
 
 参数错误返回 400，未配置项目返回 409，缺少密钥或密钥存储不可用返回 503，缺少密钥时界面可直接打开对应供应商设置；模型、工具或输出校验失败返回 502，超时返回 504。客户端断开时取消当前执行，模型原始错误不回传。
 

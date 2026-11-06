@@ -72,9 +72,9 @@ export function AgentSettings({
   onError: (error: unknown) => string
 }) {
   const [section, setSection] = useState(initialSection)
-  const [selectedProvider, setKeyProvider] = useState<AgentProvider | null>(
-    initialProvider ?? null
-  )
+  const [selectedProvider, setKeyProvider] = useState<
+    ModelCredential['provider'] | null
+  >(initialProvider ?? null)
   const [urlDraft, setUrlDraft] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState('')
   const [models, setModels] = useState<AgentModel[]>([])
@@ -194,6 +194,14 @@ export function AgentSettings({
   const configured = Boolean(credential)
   const compatible = keyProvider === 'openai-compatible'
   const baseUrl = (urlDraft ?? credential?.baseUrl ?? '').trim()
+  function setTool(tool: AgentConfig['tools'][number], enabled: boolean) {
+    setConfig((current) => ({
+      ...current,
+      tools: enabled
+        ? [...current.tools, tool]
+        : current.tools.filter((item) => item !== tool)
+    }))
+  }
 
   return (
     <SettingsDialog
@@ -234,10 +242,10 @@ export function AgentSettings({
         <form onSubmit={saveKey}>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="agent-provider">模型供应商</FieldLabel>
+              <FieldLabel htmlFor="agent-provider">服务商</FieldLabel>
               <Select
                 value={keyProvider}
-                onValueChange={(v: AgentProvider) => {
+                onValueChange={(v: ModelCredential['provider']) => {
                   setKeyProvider(v)
                   setUrlDraft(null)
                   setApiKey('')
@@ -256,6 +264,7 @@ export function AgentSettings({
                     <SelectItem value="openai-compatible">
                       OpenAI 兼容服务
                     </SelectItem>
+                    <SelectItem value="tavily">Tavily 联网搜索</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -477,11 +486,23 @@ export function AgentSettings({
                   checked={config.tools.includes('read_context')}
                   disabled={busy}
                   onCheckedChange={(enabled) =>
-                    setConfig((current) => ({
-                      ...current,
-                      tools: enabled ? ['read_context'] : []
-                    }))
+                    setTool('read_context', enabled)
                   }
+                />
+              </Field>
+              <Field orientation="horizontal">
+                <FieldContent>
+                  <FieldLabel htmlFor="agent-web-search">联网搜索</FieldLabel>
+                  <FieldDescription>
+                    在账号密钥中配置 Tavily
+                    后，支持工具调用的模型可以按需搜索网页并引用来源。
+                  </FieldDescription>
+                </FieldContent>
+                <Switch
+                  id="agent-web-search"
+                  checked={config.tools.includes('web_search')}
+                  disabled={busy}
+                  onCheckedChange={(enabled) => setTool('web_search', enabled)}
                 />
               </Field>
               <FieldSet>

@@ -77,9 +77,16 @@ test(
     )
     const originalFetch = globalThis.fetch
     const code = 'const title = "灯塔";'
-    const markdown = ['## 场景', '- **海边**', '', '```js', code, '```'].join(
-      '\n'
-    )
+    const source = 'https://example.org/shoot'
+    const markdown = [
+      '## 场景',
+      '- **海边**',
+      `[拍摄来源](${source})`,
+      '',
+      '```js',
+      code,
+      '```'
+    ].join('\n')
     const payloads = []
     const gate = Promise.withResolvers()
     const buffered = Promise.withResolvers()
@@ -180,7 +187,18 @@ test(
       await click('对话')
       await choose(project.name)
       await click('对话模型')
+      await click('账号密钥')
+      await page.getByRole('combobox', { name: '服务商' }).click()
+      await page.getByRole('option', { name: 'Tavily 联网搜索' }).click()
+      await page.getByPlaceholder('输入 API 密钥').fill('tvly-desktop-test')
+      await click('保存密钥')
+      await page.getByText('密钥已保存。', { exact: true }).waitFor()
+      await click('项目模型')
       await page.getByLabel('流式输出', { exact: true }).waitFor()
+      const searchSwitch = page.getByRole('switch', { name: '联网搜索' })
+      assert.equal(await searchSwitch.isChecked(), false)
+      await searchSwitch.click()
+      await page.getByRole('switch', { name: '读取项目或剧集上下文' }).click()
       assert.equal(
         await page.getByLabel('流式输出', { exact: true }).isChecked(),
         true
@@ -216,6 +234,10 @@ test(
         'true'
       )
       assert.equal(payloads.length, 1)
+      assert.deepEqual(
+        payloads[0].tools.map((tool) => tool.function.name).sort(),
+        ['read_context', 'web_search']
+      )
       await page.getByText('思考', { exact: false }).first().waitFor()
       assert.equal(payloads[0].reasoning_effort, 'medium')
       assert.match(JSON.stringify(payloads[0].messages), /灯塔暗号/)
@@ -223,12 +245,31 @@ test(
       await page.getByText('第一段回复1', { exact: true }).waitFor()
       await completed(2)
       const reply = page.locator('[data-role="assistant"]').last()
+      await app.evaluate(({ shell }) => {
+        shell.openExternal = async (url) => {
+          globalThis.openedSource = url
+        }
+      })
+      await reply.getByRole('link', { name: '拍摄来源' }).click()
+      assert.equal(await app.evaluate(() => globalThis.openedSource), source)
+      assert.equal(
+        (
+          await page.evaluate(() =>
+            window.noema.request({
+              type: 'chats:open-source',
+              url: 'file:///private.txt'
+            })
+          )
+        ).status,
+        400
+      )
       await reply.getByRole('button', { name: '复制', exact: true }).click()
       await reply.locator('button[data-copied="true"]').waitFor()
       await composer.press('ControlOrMeta+v')
       assert.equal(await composer.inputValue(), '第一段回复1\n\n' + markdown)
       await composer.fill('')
       const codeCopy = reply.locator('.aui-code-header-root button')
+      await reply.getByText(code, { exact: true }).waitFor()
       await codeCopy.click()
       await codeCopy.locator('.lucide-check').waitFor()
       await composer.press('ControlOrMeta+v')
@@ -268,6 +309,9 @@ test(
       await choose('独立对话')
       await send('独立聊天')
       await page.getByText('第一段回复5', { exact: true }).waitFor()
+      assert.ok(
+        !payloads[4].tools?.some((tool) => tool.function.name === 'web_search')
+      )
       assert.doesNotMatch(JSON.stringify(payloads[4].messages), /小满|灯塔暗号/)
       await http(
         'PUT',

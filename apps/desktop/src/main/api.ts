@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { app, safeStorage } from 'electron'
+import { app, safeStorage, shell } from 'electron'
 import { readFile, writeFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import {
@@ -87,6 +87,14 @@ async function send(
   if (!response.ok) {
     if (response.status === 503 && path.endsWith('/agent-runs')) {
       const body = await response.json().catch(() => null)
+      if (
+        body?.code === 'MISSING_MODEL_CREDENTIAL' &&
+        body.provider === 'tavily'
+      )
+        throw new HttpError(
+          503,
+          '请在模型设置的账号密钥中保存 Tavily 密钥，或关闭联网搜索。'
+        )
       const names = {
         openai: 'OpenAI',
         anthropic: 'Anthropic',
@@ -208,6 +216,18 @@ export async function chatStream(request: Request, expectedOrigin: string) {
 
 async function perform(request: ApiRequest): Promise<unknown> {
   switch (request.type) {
+    case 'chats:open-source': {
+      const url =
+        typeof request.url === 'string' ? URL.parse(request.url) : null
+      if (
+        !url ||
+        !['https:', 'http:'].includes(url.protocol) ||
+        url.username ||
+        url.password
+      )
+        throw new ValidationError('Invalid source URL')
+      return shell.openExternal(url.href)
+    }
     case 'chats:stream-ticket': {
       if (!token) throw new HttpError(401, '请重新登录。')
       for (const [key, ticket] of streamTickets)
@@ -252,7 +272,9 @@ async function perform(request: ApiRequest): Promise<unknown> {
     case 'credentials:save':
     case 'credentials:delete': {
       if (
-        !['openai', 'anthropic', 'openai-compatible'].includes(request.provider)
+        !['openai', 'anthropic', 'openai-compatible', 'tavily'].includes(
+          request.provider
+        )
       )
         throw new ValidationError('Invalid provider')
       if (request.type === 'credentials:delete')
