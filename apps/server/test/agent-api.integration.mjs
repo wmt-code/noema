@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import nock from 'nock'
 import { testApp, testDatabase } from './database.mjs'
 import { ModelCredentialService } from '../dist/model-credential.service.js'
 
@@ -64,15 +65,17 @@ test(
           }
         ]
       }
-      if (mode === 'tool' && toolRequests++ === 0) {
+      if ((mode === 'tool' || mode === 'search') && toolRequests++ === 0) {
+        const name = mode === 'search' ? 'web_search' : 'read_context'
+        assert.ok(body.tools.some((tool) => tool.name === name))
         item = {
           type: 'function_call',
           id: 'fc_1',
           call_id: 'call_1',
-          name: 'read_context',
-          arguments: '{}'
+          name,
+          arguments: mode === 'search' ? '{"query":"海边拍摄"}' : '{}'
         }
-      } else if (mode === 'tool') {
+      } else if (mode === 'tool' || mode === 'search') {
         observedContext = JSON.parse(
           body.input.find((item) => item.type === 'function_call_output').output
         )
@@ -240,6 +243,8 @@ test(
         )
         for (const invalid of [
           { ...config, provider: 'unknown' },
+          { ...config, provider: 'tavily' },
+          { ...config, tools: ['web_search', 'web_search'] },
           { ...config, model: 'missing' },
           { ...config, tools: ['shell'] },
           { ...config, apiKey: secret },
@@ -484,6 +489,70 @@ test(
           /Credential storage unavailable/
         )
         assert.equal((await send('DELETE', path, token)).status, 204)
+      }
+    )
+    await t.test(
+      'Pi searches with the account Tavily key and returns sources to the model',
+      async (t) => {
+        const path = '/model-credentials/tavily'
+        const key = 'tvly-test-only'
+        const searchConfig = {
+          ...config,
+          tools: ['web_search', 'read_context']
+        }
+        assert.equal(
+          (await send('PUT', configPath, token, searchConfig)).status,
+          200
+        )
+        assert.equal(
+          (await send('POST', runPath, token, { prompt: '搜索' })).status,
+          503
+        )
+        assert.equal(
+          (await send('PUT', path, token, { apiKey: key })).status,
+          204
+        )
+        assert.deepEqual(
+          await (
+            await send('GET', '/model-credentials', stranger.accessToken)
+          ).json(),
+          []
+        )
+        const source = {
+          title: '海边现场',
+          url: 'https://example.org/shoot',
+          content: '沙滩'
+        }
+        const upstream = nock('https://api.tavily.com', {
+          reqheaders: { authorization: 'Bearer ' + key }
+        })
+          .post(
+            '/search',
+            (body) => body.query === '海边拍摄' && body.max_results === 5
+          )
+          .reply(200, { images: [], results: [source] })
+        t.after(() => nock.cleanAll())
+        mode = 'search'
+        toolRequests = 0
+        const result = await send('POST', runPath, token, { prompt: '搜索' })
+        assert.equal(result.status, 200)
+        assert.ok(upstream.isDone())
+        assert.deepEqual(observedContext, [
+          { title: source.title, url: source.url, excerpt: source.content }
+        ])
+        const refused = nock('https://api.tavily.com')
+          .post('/search')
+          .reply(401, { detail: key })
+        toolRequests = 0
+        const failed = await send('POST', runPath, token, { prompt: '搜索' })
+        assert.equal(failed.status, 502)
+        const failure = await failed.text()
+        assert.match(failure, /Tavily/)
+        assert.ok(!failure.includes(key))
+        assert.ok(refused.isDone())
+        assert.equal((await send('PUT', configPath, token, config)).status, 200)
+        assert.equal((await send('DELETE', path, token)).status, 204)
+        mode = 'success'
       }
     )
     await t.test(

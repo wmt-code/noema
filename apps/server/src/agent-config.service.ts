@@ -19,6 +19,8 @@ import {
   type AgentScope
 } from './agent.service.js'
 import { AgentModelService } from './agent-model.service.js'
+import { ModelCredentialService } from './model-credential.service.js'
+import { webSearchTool } from './web-search.js'
 import { PrismaService } from './prisma.service.js'
 import { OwnershipService } from './ownership.service.js'
 
@@ -31,7 +33,11 @@ export const agentConfigSchema = z.strictObject({
   provider: providerSchema,
   model: z.string().trim().min(1).max(150),
   systemPrompt: z.string().trim().min(1).max(16000),
-  tools: z.array(z.literal('read_context')).max(1).default([]),
+  tools: z
+    .array(z.enum(['read_context', 'web_search']))
+    .max(2)
+    .refine((items) => new Set(items).size === items.length)
+    .default([]),
   streaming: z.boolean().default(true),
   thinkingLevel: z
     .enum(['off', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'])
@@ -58,6 +64,7 @@ export class AgentConfigService {
     private readonly prisma: PrismaService,
     private readonly ownership: OwnershipService,
     private readonly models: AgentModelService,
+    private readonly credentials: ModelCredentialService,
     private readonly runtime: AgentService
   ) {}
 
@@ -150,49 +157,56 @@ export class AgentConfigService {
     )
     if (attachments.images.length && !provider.model.input.includes('image'))
       throw new UnprocessableEntityException('Model cannot accept images')
-    const tools: AgentTool[] = (
-      scope.resource === 'chatThread' ? [] : config.tools
-    ).map(() => ({
-      name: 'read_context',
-      label: '读取当前上下文',
-      description: 'Read the current project or episode name and identifier.',
-      parameters: {
-        type: 'object',
-        properties: {},
-        additionalProperties: false
-      },
-      execute: async (_, __, signal) => {
-        signal?.throwIfAborted()
-        await this.ownership.assertOwned(
-          scope.user.id,
-          scope.resource,
-          scope.resourceId
-        )
-        const context =
-          scope.resource === 'project'
-            ? await this.prisma.project.findFirst({
-                where: { id: scope.resourceId, ownerId: scope.user.id },
-                select: { id: true, name: true }
-              })
-            : await this.prisma.episode.findFirst({
-                where: {
-                  id: scope.resourceId,
-                  project: { ownerId: scope.user.id }
-                },
-                select: {
-                  id: true,
-                  title: true,
-                  project: { select: { id: true, name: true } }
-                }
-              })
-        if (!context) throw new NotFoundException('Resource not found')
-        signal?.throwIfAborted()
-        return {
-          content: [{ type: 'text', text: JSON.stringify(context) }],
-          details: null
+    const tools: AgentTool[] = []
+    if (
+      scope.resource !== 'chatThread' &&
+      config.tools.includes('read_context')
+    )
+      tools.push({
+        name: 'read_context',
+        label: '读取当前上下文',
+        description: 'Read the current project or episode name and identifier.',
+        parameters: {
+          type: 'object',
+          properties: {},
+          additionalProperties: false
+        },
+        execute: async (_, __, signal) => {
+          signal?.throwIfAborted()
+          await this.ownership.assertOwned(
+            scope.user.id,
+            scope.resource,
+            scope.resourceId
+          )
+          const context =
+            scope.resource === 'project'
+              ? await this.prisma.project.findFirst({
+                  where: { id: scope.resourceId, ownerId: scope.user.id },
+                  select: { id: true, name: true }
+                })
+              : await this.prisma.episode.findFirst({
+                  where: {
+                    id: scope.resourceId,
+                    project: { ownerId: scope.user.id }
+                  },
+                  select: {
+                    id: true,
+                    title: true,
+                    project: { select: { id: true, name: true } }
+                  }
+                })
+          if (!context) throw new NotFoundException('Resource not found')
+          signal?.throwIfAborted()
+          return {
+            content: [{ type: 'text', text: JSON.stringify(context) }],
+            details: null
+          }
         }
-      }
-    }))
+      })
+    if (config.tools.includes('web_search')) {
+      const { apiKey } = await this.credentials.get(scope.user.id, 'tavily')
+      tools.push(webSearchTool(apiKey, config.limits.timeoutMs))
+    }
     const text = await this.runtime.run(
       scope,
       {

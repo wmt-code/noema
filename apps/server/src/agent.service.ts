@@ -135,7 +135,13 @@ export class AgentService {
           definition.onDelta?.('reasoning', part.delta)
       }
       if (event.type === 'tool_execution_end' && event.isError) {
-        fail(new BadGatewayException('Agent tool failed'))
+        fail(
+          new BadGatewayException(
+            event.toolName === 'web_search'
+              ? '联网搜索失败，请检查 Tavily 密钥、额度或网络连接。'
+              : 'Agent tool failed'
+          )
+        )
       }
       if (
         (event.type === 'message_update' || event.type === 'message_end') &&

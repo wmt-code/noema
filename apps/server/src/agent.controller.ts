@@ -22,6 +22,8 @@ import { compatibleBaseUrl } from './compatible-gateway.js'
 import { AgentModelService } from './agent-model.service.js'
 import { ModelCredentialService } from './model-credential.service.js'
 
+const credentialProviderSchema = z.union([providerSchema, z.literal('tavily')])
+
 @Controller()
 export class AgentController {
   constructor(
@@ -47,7 +49,7 @@ export class AgentController {
     @Param('provider') provider: string,
     @Body() body: unknown
   ) {
-    const id = parseAgentInput(providerSchema, provider)
+    const id = parseAgentInput(credentialProviderSchema, provider)
     const key = z
       .string()
       .trim()
@@ -81,7 +83,7 @@ export class AgentController {
   ) {
     return this.credentials.remove(
       request.user.id,
-      parseAgentInput(providerSchema, provider)
+      parseAgentInput(credentialProviderSchema, provider)
     )
   }
 

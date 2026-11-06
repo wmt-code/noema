@@ -44,6 +44,7 @@ const MarkdownTextImpl: FC<MarkdownTextProps> = ({
       className="aui-md"
       components={markdownComponents}
       componentsByLanguage={stableComponentsByLanguage}
+      smooth={false}
       defer
     />
   )
@@ -146,6 +147,19 @@ const defaultComponents = memoizeMarkdownComponents({
         className
       )}
       {...props}
+      onClick={(event) => {
+        if (
+          !event.isTrusted ||
+          !props.href ||
+          !/^https?:\/\//i.test(props.href)
+        )
+          return
+        event.preventDefault()
+        void window.noema.request({
+          type: 'chats:open-source',
+          url: props.href
+        })
+      }}
     />
   ),
   blockquote: ({ className, ...props }) => (

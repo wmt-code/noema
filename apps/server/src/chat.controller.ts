@@ -338,8 +338,18 @@ export class ChatController {
         )
       } catch (error) {
         const status = error instanceof HttpException ? error.getStatus() : 500
-        const message =
-          status === 502 && error instanceof HttpException
+        const problem =
+          error instanceof HttpException ? error.getResponse() : null
+        const missingSearchKey =
+          typeof problem === 'object' &&
+          problem !== null &&
+          'code' in problem &&
+          problem.code === 'MISSING_MODEL_CREDENTIAL' &&
+          'provider' in problem &&
+          problem.provider === 'tavily'
+        const message = missingSearchKey
+          ? '请在模型设置的账号密钥中保存 Tavily 密钥，或关闭联网搜索。'
+          : status === 502 && error instanceof HttpException
             ? error.message
             : ((
                 {

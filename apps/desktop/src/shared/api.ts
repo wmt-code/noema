@@ -26,7 +26,7 @@ export type ChatThread = {
   episodeId: string | null
 }
 export type ModelCredential = {
-  provider: AgentProvider
+  provider: AgentProvider | 'tavily'
   baseUrl: string | null
   updatedAt: string
 }
@@ -36,7 +36,7 @@ export type AgentConfig = {
   thinkingLevel: ThinkingLevel
   streaming: boolean
   systemPrompt: string
-  tools: 'read_context'[]
+  tools: ('read_context' | 'web_search')[]
   limits: {
     timeoutMs: number
     maxTurns: number
@@ -62,6 +62,7 @@ export type Episode = {
 }
 
 export type ApiRequest =
+  | { type: 'chats:open-source'; url: string }
   | { type: 'chats:list'; projectId: string | null }
   | { type: 'chats:create'; projectId: string | null; episodeId: string | null }
   | {
@@ -78,11 +79,11 @@ export type ApiRequest =
   | { type: 'models:list' | 'credentials:list' }
   | {
       type: 'credentials:save'
-      provider: AgentProvider
+      provider: ModelCredential['provider']
       apiKey: string
       baseUrl?: string
     }
-  | { type: 'credentials:delete'; provider: AgentProvider }
+  | { type: 'credentials:delete'; provider: ModelCredential['provider'] }
   | { type: 'agent:config'; projectId: string | null }
   | { type: 'agent:save'; projectId: string | null; config: AgentConfig }
   | {
