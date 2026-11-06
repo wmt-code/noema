@@ -6,3 +6,4 @@
 - [第一阶段开发步骤](./phase-1.md)：最小提交拆分、验证标准、开发进度及 worktree 并行规则。
 - [前端参考设计](./frontend-design.md)：设计资源、视觉方向、项目与剧集布局及交互验收方式。
 - [Agent 运行基础](./agent-runtime.md)：Pi Agent Core 调用约定、权限边界、执行限制及验证方式。
+- [模型与 Agent 设置](./agent-settings.md)：桌面密钥配置、项目配置、调用接口和加密存储部署约定。

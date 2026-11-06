@@ -80,7 +80,7 @@ try {
   const csp = await page
     .locator('meta[http-equiv="Content-Security-Policy"]')
     .getAttribute('content')
-  assert.ok(csp?.includes("connect-src 'none'"))
+  assert.match(csp ?? '', /connect-src noema-chat:;/)
   assert.ok(
     !csp.includes('unsafe-eval') &&
       !csp.includes('http:') &&

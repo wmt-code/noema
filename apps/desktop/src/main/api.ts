@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { app, safeStorage } from 'electron'
 import { readFile, writeFile, rm } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -6,9 +7,10 @@ import {
   parseEpisodePatch,
   parseProjectCreate,
   parseProjectPatch,
+  validateAttachments,
   ValidationError
 } from '@noema/shared'
-import type { ApiRequest, ApiResponse } from '../shared/api'
+import type { ApiRequest, ApiResponse, AgentProvider } from '../shared/api'
 
 let token: string | undefined
 const sessionFile = () => join(app.getPath('userData'), 'session.bin')
@@ -58,7 +60,8 @@ async function forgetSession(): Promise<void> {
 class HttpError extends Error {
   constructor(
     public status: number,
-    message: string
+    message: string,
+    public missingProvider?: AgentProvider
   ) {
     super(message)
   }
@@ -67,7 +70,8 @@ class HttpError extends Error {
 async function send(
   method: string,
   path: string,
-  body?: unknown
+  body?: unknown,
+  timeoutMs = 15000
 ): Promise<unknown> {
   const response = await fetch(`${serviceUrl()}${path}`, {
     method,
@@ -76,19 +80,55 @@ async function send(
       ...(body === undefined ? {} : { 'content-type': 'application/json' })
     },
     ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(timeoutMs),
     redirect: 'error'
   })
   if (response.status === 401) await forgetSession()
   if (!response.ok) {
+    if (response.status === 503 && path.endsWith('/agent-runs')) {
+      const body = await response.json().catch(() => null)
+      const names = {
+        openai: 'OpenAI',
+        anthropic: 'Anthropic',
+        'openai-compatible': 'OpenAI 兼容服务'
+      }
+      if (
+        body?.code === 'MISSING_MODEL_CREDENTIAL' &&
+        Object.hasOwn(names, body.provider)
+      ) {
+        const provider = body.provider as AgentProvider
+        const fields =
+          provider === 'openai-compatible' ? 'Base URL 和 API 密钥' : 'API 密钥'
+        throw new HttpError(
+          503,
+          '此项目使用「' +
+            names[provider] +
+            '」，请先保存该服务的 ' +
+            fields +
+            '。',
+          provider
+        )
+      }
+    }
     const messages: Record<number, string> = {
-      400: '请检查填写内容。',
+      400:
+        path === '/model-credentials/openai-compatible'
+          ? '请检查密钥和 Base URL。请使用公网 HTTPS 根地址，省略查询参数和 /chat/completions。'
+          : '请检查填写内容。',
       401:
         path === '/auth/login'
           ? '邮箱或密码不正确。'
           : '登录已过期，请重新登录。',
       404: '项目或剧集已不存在，请刷新列表。',
-      409: '该邮箱已注册，请直接登录。',
+      409:
+        path === '/auth/register'
+          ? '该邮箱已注册，请直接登录。'
+          : '请先保存项目的 Agent 配置。',
+      413: '附件内容超过请求上限。',
+      422: '当前模型不支持图片，请选用视觉模型或发送文本文件。',
+      502: '模型未能完成回复，请检查服务商地址、模型 ID 及其支持的输入类型。',
+      503: '模型暂不可用，请在设置中配置密钥，或检查服务端密钥存储。',
+      504: '模型调用超时，请稍后重试或调整执行限制。',
       429: '操作过于频繁，请稍后重试。'
     }
     throw new HttpError(
@@ -109,8 +149,159 @@ function id(value: unknown): string {
   return value
 }
 
+const streamTickets = new Map<
+  string,
+  { id: string; session: string; expires: number }
+>()
+// Opaque local desktop transport. Only this authenticated chat route is exposed to the renderer.
+export async function chatStream(request: Request, expectedOrigin: string) {
+  const url = new URL(request.url)
+  const route = /^\/chats\/([0-9a-f-]{36})\/stream$/.exec(url.pathname)
+  const origin = request.headers.get('origin')
+  if (
+    url.hostname !== 'api' ||
+    !route ||
+    (origin && !['null', 'file://', expectedOrigin].includes(origin)) ||
+    !token
+  )
+    return new Response(null, { status: 403 })
+  const cors = {
+    'access-control-allow-origin': origin ?? 'null',
+    'access-control-allow-methods': 'POST',
+    'access-control-allow-headers': 'content-type,x-noema-stream'
+  }
+  if (request.method === 'OPTIONS')
+    return new Response(null, { status: 204, headers: cors })
+  if (request.method !== 'POST') return new Response(null, { status: 405 })
+  const key = request.headers.get('x-noema-stream') ?? ''
+  const ticket = streamTickets.get(key)
+  streamTickets.delete(key)
+  if (
+    !ticket ||
+    ticket.session !== token ||
+    ticket.id !== route[1] ||
+    ticket.expires < Date.now()
+  )
+    return new Response(null, { status: 403, headers: cors })
+  const response = await fetch(
+    serviceUrl() + '/chats/' + id(route[1]) + '/stream',
+    {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer ' + token,
+        'content-type': 'application/json'
+      },
+      body: await request.arrayBuffer(),
+      signal: request.signal,
+      redirect: 'error'
+    }
+  )
+  return new Response(response.body, {
+    status: response.status,
+    headers: {
+      ...cors,
+      'content-type':
+        response.headers.get('content-type') ?? 'application/octet-stream'
+    }
+  })
+}
+
 async function perform(request: ApiRequest): Promise<unknown> {
   switch (request.type) {
+    case 'chats:stream-ticket': {
+      if (!token) throw new HttpError(401, '请重新登录。')
+      for (const [key, ticket] of streamTickets)
+        if (ticket.expires < Date.now()) streamTickets.delete(key)
+      const key = randomUUID()
+      streamTickets.set(key, {
+        id: id(request.id),
+        session: token,
+        expires: Date.now() + 30_000
+      })
+      return key
+    }
+    case 'chats:list':
+      return send(
+        'GET',
+        '/chats' +
+          (request.projectId ? '?project=' + id(request.projectId) : '')
+      )
+    case 'chats:create':
+      return send('POST', '/chats', {
+        projectId: request.projectId && id(request.projectId),
+        episodeId: request.episodeId && id(request.episodeId)
+      })
+    case 'chats:get':
+      return send('GET', '/chats/' + id(request.id))
+    case 'chats:history':
+      return send('GET', '/chats/' + id(request.id) + '/messages')
+    case 'chats:append':
+      return send(
+        'POST',
+        '/chats/' + id(request.id) + '/messages',
+        request.item
+      )
+    case 'chats:update':
+      return send('PATCH', '/chats/' + id(request.id), request.data)
+    case 'chats:delete':
+      return send('DELETE', '/chats/' + id(request.id))
+    case 'models:list':
+      return send('GET', '/agent-models')
+    case 'credentials:list':
+      return send('GET', '/model-credentials')
+    case 'credentials:save':
+    case 'credentials:delete': {
+      if (
+        !['openai', 'anthropic', 'openai-compatible'].includes(request.provider)
+      )
+        throw new ValidationError('Invalid provider')
+      if (request.type === 'credentials:delete')
+        return send('DELETE', `/model-credentials/${request.provider}`)
+      if (
+        typeof request.apiKey !== 'string' ||
+        !/^[\x21-\x7e]{1,4096}$/.test(request.apiKey.trim())
+      )
+        throw new ValidationError('Invalid API key')
+      return send('PUT', `/model-credentials/${request.provider}`, {
+        apiKey: request.apiKey.trim(),
+        ...(request.provider === 'openai-compatible'
+          ? { baseUrl: request.baseUrl }
+          : {})
+      })
+    }
+    case 'agent:config':
+      return (
+        (await send(
+          'GET',
+          request.projectId
+            ? `/projects/${id(request.projectId)}/agent-config`
+            : '/chat-config'
+        )) as { config: unknown }
+      ).config
+    case 'agent:save':
+      return send(
+        'PUT',
+        request.projectId
+          ? `/projects/${id(request.projectId)}/agent-config`
+          : '/chat-config',
+        request.config
+      )
+    case 'agent:run': {
+      const attachments = validateAttachments(request.attachments)
+      if (
+        !['projects', 'episodes'].includes(request.resource) ||
+        typeof request.prompt !== 'string' ||
+        (!request.prompt.trim() && !attachments.length) ||
+        request.prompt.length > 16000
+      )
+        throw new ValidationError('Invalid agent input')
+      return send(
+        'POST',
+        `/${request.resource}/${id(request.id)}/agent-runs`,
+        { prompt: request.prompt, attachments },
+        315000
+      )
+    }
     case 'session':
       return token ? send('GET', '/auth/me') : null
     case 'register':
@@ -192,7 +383,14 @@ export async function handleRequest(request: ApiRequest): Promise<ApiResponse> {
     return { ok: true, data: await perform(request) }
   } catch (error) {
     if (error instanceof HttpError)
-      return { ok: false, status: error.status, message: error.message }
+      return {
+        ok: false,
+        status: error.status,
+        message: error.message,
+        ...(error.missingProvider
+          ? { missingProvider: error.missingProvider }
+          : {})
+      }
     if (error instanceof ValidationError)
       return { ok: false, status: 400, message: '请检查填写内容。' }
     return {

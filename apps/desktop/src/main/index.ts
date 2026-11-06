@@ -1,7 +1,20 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, protocol } from 'electron'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import { handleRequest, restoreSession } from './api'
+import { chatStream, handleRequest, restoreSession } from './api'
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'noema-chat',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      corsEnabled: true,
+      stream: true
+    }
+  }
+])
 
 async function createWindow(): Promise<void> {
   const developmentUrl =
@@ -59,6 +72,14 @@ app
   .whenReady()
   .then(async () => {
     await restoreSession()
+    protocol.handle('noema-chat', (request) =>
+      chatStream(
+        request,
+        process.env.NODE_ENV === 'development' && !app.isPackaged
+          ? 'http://127.0.0.1:5180'
+          : 'null'
+      )
+    )
     ipcMain.handle('noema:request', (event, request: unknown) => {
       const window = BrowserWindow.fromWebContents(event.sender)
       const frame = event.senderFrame

@@ -11,15 +11,17 @@ import {
   Film,
   FolderClosed,
   FolderOpen,
+  MessageSquare,
   MoreHorizontal,
   Pencil,
   Plus,
   RefreshCw,
   Search,
+  Settings,
   Trash2
 } from 'lucide-react'
 import { EPISODE_STATUSES, type EpisodeStatus } from '@noema/shared'
-import type { Episode, Project, User } from '../../shared/api'
+import type { AgentProvider, Episode, Project, User } from '../../shared/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -91,6 +93,11 @@ import {
   TableCell
 } from '@/components/ui/table'
 import { ApiError, request } from '@/lib/api'
+import { AgentSettings } from './AgentSettings'
+import { ChatRuntime } from './agent/chat-runtime'
+import { Thread } from '@/components/assistant-ui/elements/thread.aui'
+import { ThreadList } from '@/components/assistant-ui/elements/thread-list.aui'
+import type { SettingsSection } from './agent/settings-dialog'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Logistics } from './logistics/logistics'
@@ -248,6 +255,15 @@ type Editor =
   | { mode: 'edit-episode' | 'delete-episode'; episode: Episode }
 
 function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
+  const [settings, setSettings] = useState<{
+    projectId: string | null
+    projectName?: string
+    section: SettingsSection
+    initialProvider?: AgentProvider
+  } | null>(null)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatEpisode, setChatEpisode] = useState<string | null>(null)
+  const [independent, setIndependent] = useState(false)
   const [projects, setProjects] = useState<Project[]>([])
   const [projectId, setProjectId] = useState<string | null>(null)
   const [rawEpisodes, setEpisodes] = useState<Episode[] | null>(null)
@@ -331,6 +347,8 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
   }, [projectId, episodeRefresh, handleError])
 
   function selectProject(id: string | null) {
+    setChatOpen(false)
+    setChatEpisode(null)
     setOpenMobile(false)
     setDetailsOpen(!!id && window.innerWidth < 1024)
     const nextId = id ?? projects[0]?.id ?? null
@@ -503,6 +521,19 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
           <DropdownMenuGroup>
             <DropdownMenuItem
               onSelect={() =>
+                setSettings({
+                  projectId: item.id,
+                  projectName: item.name,
+                  section: 'project'
+                })
+              }
+            >
+              <Settings />
+              项目模型设置
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onSelect={() =>
                 openEditor({ mode: 'rename-project', project: item })
               }
             >
@@ -531,16 +562,18 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
     >
       <div className="flex items-center justify-between gap-2 pr-10 lg:pr-0">
         <h2 className="font-medium">剧集内容</h2>
-        <Button
-          size="sm"
-          disabled={episodes === null || !!episodeError}
-          onClick={() =>
-            openEditor({ mode: 'create-episode', projectId: project.id })
-          }
-        >
-          <Plus />
-          新建剧集
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            size="sm"
+            disabled={episodes === null || !!episodeError}
+            onClick={() =>
+              openEditor({ mode: 'create-episode', projectId: project.id })
+            }
+          >
+            <Plus />
+            新建剧集
+          </Button>
+        </div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <InputGroup className="min-w-28 flex-1">
@@ -742,13 +775,27 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
     </section>
   )
   function focusProjectSearch() {
+    setChatOpen(false)
     setDetailsOpen(false)
     document
       .querySelector<HTMLInputElement>('input[aria-label="搜索项目"]')
       ?.focus()
   }
+  const scopeProject = independent ? null : (project ?? null)
+  const settingsProject = chatOpen ? scopeProject : project
   return (
-    <>
+    <ChatRuntime
+      key={(scopeProject?.id ?? 'personal') + (chatEpisode ?? '')}
+      projectId={scopeProject?.id ?? null}
+      episodeId={chatEpisode}
+    >
+      {settings && (
+        <AgentSettings
+          {...settings}
+          onClose={() => setSettings(null)}
+          onError={handleError}
+        />
+      )}
       <AppSidebar
         email={user.email}
         onHome={() => selectProject(null)}
@@ -780,38 +827,90 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={true}
+                  isActive={chatOpen}
+                  onClick={() => {
+                    setChatOpen(true)
+                    setDetailsOpen(false)
+                    setOpenMobile(false)
+                  }}
+                  tooltip="对话"
+                >
+                  <MessageSquare />
+                  <span>对话</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={!chatOpen}
                   onClick={() => selectProject(null)}
                 >
                   <FolderClosed />
                   <span>项目</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => {
+                    setOpenMobile(false)
+                    setSettings(
+                      settingsProject
+                        ? {
+                            projectId: settingsProject.id,
+                            projectName: settingsProject.name,
+                            section: 'keys'
+                          }
+                        : { projectId: null, section: 'keys' }
+                    )
+                  }}
+                >
+                  <Settings />
+                  <span>模型设置</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>最近项目</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {[...projects]
-                .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-                .slice(0, 5)
-                .map((item) => (
-                  <SidebarMenuItem key={item.id}>
-                    <SidebarMenuButton
-                      isActive={item.id === projectId}
-                      onClick={() => selectProject(item.id)}
-                      title={item.name}
-                    >
-                      <FolderClosed />
-                      <span>{item.name}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {chatOpen ? (
+          <SidebarGroup>
+            <SidebarGroupLabel>会话历史</SidebarGroupLabel>
+            <SidebarGroupContent
+              onClick={(event) => {
+                if (
+                  event.target instanceof Element &&
+                  event.target.closest(
+                    '[data-slot="aui_thread-list-item-trigger"],[data-slot="aui_thread-list-new"]'
+                  )
+                )
+                  setOpenMobile(false)
+              }}
+            >
+              <ThreadList />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ) : (
+          <SidebarGroup>
+            <SidebarGroupLabel>最近项目</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {[...projects]
+                  .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+                  .slice(0, 5)
+                  .map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        isActive={item.id === projectId}
+                        onClick={() => selectProject(item.id)}
+                        title={item.name}
+                      >
+                        <FolderClosed />
+                        <span>{item.name}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </AppSidebar>
       <DashboardLayout email={user.email} focusSearch={focusProjectSearch}>
         {error && (
@@ -819,61 +918,128 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        <Logistics
-          detailsOpen={detailsOpen}
-          setDetailsOpen={setDetailsOpen}
-          title={project?.name ?? '项目详情'}
-          list={
-            <ProjectList
-              projects={visibleProjects}
-              selectedId={projectId}
-              select={selectProject}
-              create={() => openEditor({ mode: 'create-project' })}
-              reload={reloadProjects}
-              sortControl={
-                <Select value={sort} onValueChange={setSort}>
-                  <SelectTrigger className="w-36" aria-label="项目排序">
+        {chatOpen ? (
+          <section
+            aria-label="对话"
+            className="flex h-[calc(100dvh-6rem)] min-h-0 flex-col"
+          >
+            <div className="flex flex-wrap items-center gap-2 border-b pb-2">
+              <Select
+                value={scopeProject?.id ?? 'personal'}
+                onValueChange={(value) => {
+                  setIndependent(value === 'personal')
+                  if (value !== 'personal') setProjectId(value)
+                  setChatEpisode(null)
+                }}
+              >
+                <SelectTrigger aria-label="对话项目">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="personal">独立对话</SelectItem>
+                  {projects.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {scopeProject && !!episodes?.length && (
+                <Select
+                  value={chatEpisode ?? 'project'}
+                  onValueChange={(v) =>
+                    setChatEpisode(v === 'project' ? null : v)
+                  }
+                >
+                  <SelectTrigger aria-label="剧集上下文">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectGroup>
-                      <SelectItem value="updated">最近更新</SelectItem>
-                      <SelectItem value="name">项目名称</SelectItem>
-                    </SelectGroup>
+                  <SelectContent>
+                    <SelectItem value="project">整个项目</SelectItem>
+                    {episodes.map((e) => (
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.title}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
-              }
-              query={projectQuery}
-              setQuery={setProjectQuery}
-              loading={loading}
-              loadError={loadError}
-            />
-          }
-          details={
-            project ? (
-              <ProjectDetails
-                key={project.id}
-                project={project}
-                user={user}
-                episodes={episodes}
-                episodeContent={episodeContent}
-                menu={projectMenu(project)}
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                  setSettings({
+                    projectId: scopeProject?.id ?? null,
+                    ...(scopeProject ? { projectName: scopeProject.name } : {}),
+                    section: 'project'
+                  })
+                }
+              >
+                <Settings />
+                对话模型
+              </Button>
+            </div>
+            <div className="min-h-0 flex-1">
+              <Thread />
+            </div>
+          </section>
+        ) : (
+          <Logistics
+            detailsOpen={detailsOpen}
+            setDetailsOpen={setDetailsOpen}
+            title={project?.name ?? '项目详情'}
+            list={
+              <ProjectList
+                projects={visibleProjects}
+                selectedId={projectId}
+                select={selectProject}
+                create={() => openEditor({ mode: 'create-project' })}
+                reload={reloadProjects}
+                sortControl={
+                  <Select value={sort} onValueChange={setSort}>
+                    <SelectTrigger className="w-36" aria-label="项目排序">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      <SelectGroup>
+                        <SelectItem value="updated">最近更新</SelectItem>
+                        <SelectItem value="name">项目名称</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                }
+                query={projectQuery}
+                setQuery={setProjectQuery}
+                loading={loading}
+                loadError={loadError}
               />
-            ) : (
-              <Empty className="h-full">
-                <EmptyHeader>
-                  <EmptyMedia variant="icon">
-                    <FolderOpen />
-                  </EmptyMedia>
-                  <EmptyTitle>项目详情</EmptyTitle>
-                  <EmptyDescription>
-                    选择项目后，在这里查看剧集与项目信息。
-                  </EmptyDescription>
-                </EmptyHeader>
-              </Empty>
-            )
-          }
-        />
+            }
+            details={
+              project ? (
+                <ProjectDetails
+                  key={project.id}
+                  project={project}
+                  user={user}
+                  episodes={episodes}
+                  episodeContent={episodeContent}
+                  menu={projectMenu(project)}
+                />
+              ) : (
+                <Empty className="h-full">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <FolderOpen />
+                    </EmptyMedia>
+                    <EmptyTitle>项目详情</EmptyTitle>
+                    <EmptyDescription>
+                      选择项目后，在这里查看剧集与项目信息。
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              )
+            }
+          />
+        )}
       </DashboardLayout>
       <Dialog
         open={editor !== null && !deleting}
@@ -1015,6 +1181,6 @@ function Workspace({ user, onLogout }: { user: User; onLogout: () => void }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </ChatRuntime>
   )
 }

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { NestFactory } from '@nestjs/core'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../dist/generated/prisma/client.js'
+import { configureChatBodyParser } from '../dist/agent-attachments.js'
 import { AppModule } from '../dist/app.module.js'
 
 const root = fileURLToPath(new URL('../../../', import.meta.url))
@@ -35,6 +36,7 @@ export async function testApp(t, url) {
   await deploy(url.toString())
   process.env.DATABASE_URL = url
   const app = await NestFactory.create(AppModule, { logger: false })
+  configureChatBodyParser(app)
   t.after(() => app.close())
   await app.listen(0, '127.0.0.1')
   return app.getUrl()

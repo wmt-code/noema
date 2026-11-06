@@ -11,18 +11,25 @@
     "build": "corepack pnpm --filter @noema/shared build && electron-vite build",
     "smoke": "node scripts/smoke.mjs",
     "smoke:dev": "node scripts/smoke-dev.mjs",
-    "smoke:projects": "node --env-file-if-exists=../../.env --test scripts/smoke-projects.mjs"
+    "smoke:projects": "node --env-file-if-exists=../../.env --test scripts/smoke-projects.mjs",
+    "smoke:agents": "node --env-file-if-exists=../../.env --test scripts/smoke-agent-settings.mjs"
   },
   "dependencies": {
+    "@assistant-ui/react": "0.15.32",
+    "@assistant-ui/react-markdown": "0.14.24",
     "@noema/shared": "workspace:*",
+    "assistant-stream": "0.3.55",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "cmdk": "^1.1.1",
     "cn": "0.5.2",
     "lucide-react": "1.67.0",
     "radix-ui": "1.8.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "tailwind-merge": "3.7.0"
+    "remark-gfm": "4.0.1",
+    "tailwind-merge": "3.7.0",
+    "zustand": "5.0.16"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.3.4",

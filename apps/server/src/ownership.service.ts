@@ -6,6 +6,7 @@ import {
 import { PrismaService } from './prisma.service.js'
 
 export type Resource =
+  | 'chatThread'
   | 'project'
   | 'episode'
   | 'scriptRevision'
@@ -36,6 +37,11 @@ export class OwnershipService {
     const select = { id: true } as const
     // Filter ownership in SQL; never trust ownerId supplied in an HTTP body.
     const queries = {
+      chatThread: () =>
+        this.prisma.chatThread.findFirst({
+          where: { id, userId: ownerId },
+          select
+        }),
       project: () =>
         this.prisma.project.findFirst({ where: { id, ...project }, select }),
       episode: () =>
