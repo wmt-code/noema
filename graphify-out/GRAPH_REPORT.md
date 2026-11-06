@@ -1,32 +1,32 @@
-# Graph Report - noema  (2026-11-05)
+# Graph Report - studio-dashboard  (2026-11-06)
 
 ## Corpus Check
-- 82 files · ~239,377 words
+- 94 files · ~242,643 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 747 nodes · 1032 edges · 55 communities (44 shown, 6 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.8)
+- 783 nodes · 1162 edges · 56 communities (46 shown, 4 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 16 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `40d9740a`
+- Built from commit: `b6acbecb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- app.module.ts
+- AuthRequest
 - 第一阶段开发步骤
 - dependencies
 - dependencies
 - scripts
 - main/api.ts
-- Workspace
+- sheet.tsx
 - devDependencies
 - sidebar.tsx
 - compilerOptions
 - components.json
-- App.tsx
+- project-details.tsx
 - compilerOptions
 - tsconfig.web.json
 - database.mjs
@@ -39,7 +39,7 @@
 - dialog.tsx
 - AI 真人短剧创作平台 — Engineering Plan
 - 11. 实施计划
-- dropdown-menu.tsx
+- nav-user.tsx
 - 6. AI 生成任务设计
 - .prettierrc.json
 - 20261103000000_init/migration.sql
@@ -56,15 +56,15 @@
 - 8. API 与事件契约
 - input-group.tsx
 - dev.mjs
-- alert-dialog.tsx
+- App.tsx
 - select.tsx
-- empty.tsx
-- avatar.tsx
-- App
-- alert.tsx
+- app-sidebar.tsx
+- dashboard-layout.tsx
+- Workspace
 - AGENTS.md
-- badge.tsx
-- AuthRequest
+- alert.tsx
+- Project
+- project-list.tsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `scripts` - 20 edges
@@ -73,35 +73,35 @@
 4. `compilerOptions` - 15 edges
 5. `ProjectController` - 14 edges
 6. `AI 真人短剧创作平台 — Engineering Plan` - 14 edges
-7. `AuthService` - 13 edges
-8. `compilerOptions` - 13 edges
-9. `Workspace()` - 12 edges
-10. `PrismaService` - 11 edges
+7. `Workspace()` - 13 edges
+8. `AuthService` - 13 edges
+9. `compilerOptions` - 13 edges
+10. `Button()` - 12 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Project` --references--> `"User"`  [EXTRACTED]
-  apps/desktop/src/shared/api.ts → prisma/migrations/20261103010000_auth_ownership/migration.sql
-- `App()` --calls--> `request()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/lib/api.ts
-- `Workspace()` --calls--> `useSidebar()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/components/ui/sidebar.tsx
-- `logout()` --calls--> `request()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/lib/api.ts
 - `save()` --indirect_call--> `status()`  [INFERRED]
   apps/desktop/src/renderer/src/App.tsx → apps/server/test/agent.test.mjs
+- `Project` --references--> `"User"`  [EXTRACTED]
+  apps/desktop/src/shared/api.ts → prisma/migrations/20261103010000_auth_ownership/migration.sql
+- `Workspace()` --calls--> `useSidebar()`  [EXTRACTED]
+  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/components/ui/sidebar.tsx
+- `Workspace()` --calls--> `date()`  [EXTRACTED]
+  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/logistics/project-format.ts
+- `logout()` --calls--> `request()`  [EXTRACTED]
+  apps/desktop/src/renderer/src/App.tsx → apps/desktop/src/renderer/src/lib/api.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (55 total, 6 thin omitted)
+## Communities (56 total, 4 thin omitted)
 
-### Community 0 - "app.module.ts"
-Cohesion: 0.06
-Nodes (33): AgentDefinition, AgentScope, AgentService, limitsSchema, Injectable, AppModule, AuthController, Response (+25 more)
+### Community 0 - "AuthRequest"
+Cohesion: 0.05
+Nodes (45): AgentDefinition, AgentScope, AgentService, limitsSchema, Injectable, AppModule, AuthController, Response (+37 more)
 
 ### Community 1 - "第一阶段开发步骤"
 Cohesion: 0.05
-Nodes (38): Noema 桌面端, 功能, 启动, 桌面边界, 检查, Noema Server, 开发与验证, 环境与接口 (+30 more)
+Nodes (32): Noema 桌面端, 功能, 启动, 桌面边界, 检查, Noema Server, 开发与验证, 环境与接口 (+24 more)
 
 ### Community 2 - "dependencies"
 Cohesion: 0.05
@@ -116,20 +116,20 @@ Cohesion: 0.04
 Nodes (44): eslint, eslint-config-prettier, @eslint/js, eslint-plugin-react-hooks, globals, description, devDependencies, eslint (+36 more)
 
 ### Community 5 - "main/api.ts"
-Cohesion: 0.12
-Nodes (19): forgetSession(), handleRequest(), HttpError, perform(), restoreSession(), send(), serviceUrl(), sessionFile() (+11 more)
+Cohesion: 0.16
+Nodes (15): forgetSession(), handleRequest(), HttpError, perform(), restoreSession(), send(), serviceUrl(), sessionFile() (+7 more)
 
-### Community 6 - "Workspace"
-Cohesion: 0.21
-Nodes (10): date(), Workspace(), logout(), openEditor(), projectMenu(), save(), selectProject(), ApiError (+2 more)
+### Community 6 - "sheet.tsx"
+Cohesion: 0.20
+Nodes (7): Sheet(), SheetContent(), SheetDescription(), SheetHeader(), SheetTitle(), Logistics(), LogisticsProps
 
 ### Community 7 - "devDependencies"
 Cohesion: 0.08
 Nodes (25): devDependencies, electron, electron-vite, playwright-core, tailwindcss, @tailwindcss/vite, tw-animate-css, @types/node (+17 more)
 
 ### Community 8 - "sidebar.tsx"
-Cohesion: 0.06
-Nodes (30): Sheet(), SheetContent(), SheetDescription(), SheetHeader(), SheetTitle(), Sidebar(), SidebarContent(), SidebarContext (+22 more)
+Cohesion: 0.10
+Nodes (12): SidebarContext, SidebarContextProps, SidebarGroup(), SidebarGroupContent(), SidebarGroupLabel(), SidebarProvider(), Skeleton(), Tooltip() (+4 more)
 
 ### Community 9 - "compilerOptions"
 Cohesion: 0.10
@@ -139,9 +139,9 @@ Nodes (19): compilerOptions, emitDecoratorMetadata, experimentalDecorators, forc
 Cohesion: 0.11
 Nodes (17): aliases, components, hooks, lib, ui, utils, iconLibrary, rsc (+9 more)
 
-### Community 11 - "App.tsx"
-Cohesion: 0.14
-Nodes (15): Editor, statuses, Breadcrumb(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage(), BreadcrumbSeparator() (+7 more)
+### Community 11 - "project-details.tsx"
+Cohesion: 0.19
+Nodes (13): Badge(), badgeVariants, Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger(), ProjectDetails() (+5 more)
 
 ### Community 12 - "compilerOptions"
 Cohesion: 0.12
@@ -180,8 +180,8 @@ Cohesion: 0.29
 Nodes (6): 代码提交规范, 使用方式, 工单引用, 格式, 示例, 类型
 
 ### Community 21 - "dialog.tsx"
-Cohesion: 0.16
-Nodes (8): Button(), buttonVariants, Dialog(), DialogContent(), DialogDescription(), DialogFooter(), DialogHeader(), DialogTitle()
+Cohesion: 0.15
+Nodes (9): Button(), buttonVariants, Dialog(), DialogContent(), DialogDescription(), DialogFooter(), DialogHeader(), DialogTitle() (+1 more)
 
 ### Community 22 - "AI 真人短剧创作平台 — Engineering Plan"
 Cohesion: 0.33
@@ -191,9 +191,9 @@ Nodes (6): 10. 项目结构, 12.1 测试策略, 12.2 工程要求, 12. 测试与
 Cohesion: 0.33
 Nodes (6): 11. 实施计划, Phase 1 — 工程基础与项目管理, Phase 2 — Agent 创作与分镜, Phase 3 — AI 媒体生成, Phase 4 — 质量审核与成片, Phase 5 — 集成测试与交付
 
-### Community 24 - "dropdown-menu.tsx"
-Cohesion: 0.12
-Nodes (5): DropdownMenu(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem(), DropdownMenuTrigger()
+### Community 24 - "nav-user.tsx"
+Cohesion: 0.17
+Nodes (7): DropdownMenu(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuSeparator(), DropdownMenuTrigger()
 
 ### Community 25 - "6. AI 生成任务设计"
 Cohesion: 0.40
@@ -243,52 +243,60 @@ Nodes (3): 8.1 REST API, 8.2 实时事件, 8. API 与事件契约
 Cohesion: 0.21
 Nodes (8): InputGroup(), InputGroupAddon(), inputGroupAddonVariants, InputGroupButton(), inputGroupButtonVariants, InputGroupInput(), Input(), Textarea()
 
-### Community 46 - "alert-dialog.tsx"
-Cohesion: 0.15
-Nodes (8): AlertDialog(), AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogTitle()
+### Community 46 - "App.tsx"
+Cohesion: 0.13
+Nodes (15): Editor, AlertDialog(), AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader() (+7 more)
 
 ### Community 47 - "select.tsx"
 Cohesion: 0.18
 Nodes (6): Select(), SelectContent(), SelectGroup(), SelectItem(), SelectTrigger(), SelectValue()
 
-### Community 48 - "empty.tsx"
-Cohesion: 0.29
-Nodes (7): Empty(), EmptyContent(), EmptyDescription(), EmptyHeader(), EmptyMedia(), emptyMediaVariants, EmptyTitle()
+### Community 48 - "app-sidebar.tsx"
+Cohesion: 0.18
+Nodes (12): Sidebar(), SidebarContent(), SidebarFooter(), SidebarHeader(), SidebarMenu(), SidebarMenuButton(), sidebarMenuButtonVariants, SidebarMenuItem() (+4 more)
 
-### Community 50 - "App"
-Cohesion: 0.33
-Nodes (5): App(), Auth(), submit(), message(), root
+### Community 49 - "dashboard-layout.tsx"
+Cohesion: 0.18
+Nodes (6): Avatar(), AvatarFallback(), SidebarInset(), SidebarTrigger(), DashboardLayout(), ThemeSwitcher()
 
-### Community 51 - "alert.tsx"
-Cohesion: 0.50
-Nodes (3): Alert(), AlertDescription(), alertVariants
+### Community 50 - "Workspace"
+Cohesion: 0.14
+Nodes (15): App(), Auth(), submit(), message(), Workspace(), logout(), openEditor(), projectMenu() (+7 more)
 
 ### Community 52 - "AGENTS.md"
-Cohesion: 0.50
-Nodes (3): Git 协作规范, Graphify, 前端组件规范
+Cohesion: 0.40
+Nodes (4): Git 协作规范, Graphify, 前端模板使用规范, 前端组件规范
 
-### Community 54 - "AuthRequest"
-Cohesion: 0.26
-Nodes (12): AuthRequest, parse(), ProjectController, Body, Controller, Get, HttpCode, Post (+4 more)
+### Community 53 - "alert.tsx"
+Cohesion: 0.40
+Nodes (3): Alert(), AlertDescription(), alertVariants
+
+### Community 54 - "Project"
+Cohesion: 0.50
+Nodes (4): Project, "Asset", "Session", "User"
+
+### Community 55 - "project-list.tsx"
+Cohesion: 0.13
+Nodes (16): Card(), CardAction(), CardContent(), CardHeader(), CardTitle(), Empty(), EmptyContent(), EmptyDescription() (+8 more)
 
 ## Knowledge Gaps
-- **286 isolated node(s):** `semi`, `singleQuote`, `trailingComma`, `endOfLine`, `$schema` (+281 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 376 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **284 isolated node(s):** `semi`, `singleQuote`, `trailingComma`, `endOfLine`, `$schema` (+279 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 383 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `status()` connect `Workspace` to `database.mjs`?**
-  _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **Why does `Workspace()` connect `Workspace` to `sidebar.tsx`, `App`, `App.tsx`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
+- **Why does `Workspace()` connect `Workspace` to `app-sidebar.tsx`, `project-details.tsx`, `App.tsx`?**
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `semi`, `singleQuote`, `trailingComma` to the rest of the system?**
-  _286 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `app.module.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.060515873015873016 - nodes in this community are weakly interconnected._
+  _284 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `AuthRequest` be split into smaller, more focused modules?**
+  _Cohesion score 0.0545308740978348 - nodes in this community are weakly interconnected._
 - **Should `第一阶段开发步骤` be split into smaller, more focused modules?**
-  _Cohesion score 0.0463768115942029 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05384615384615385 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**

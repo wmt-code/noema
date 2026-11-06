@@ -40,12 +40,6 @@ try {
   await page.getByRole('heading', { name: '登录 Noema' }).waitFor()
   assert.equal(
     await page
-      .locator('.auth-art')
-      .evaluate((image) => image.complete && image.naturalWidth > 0),
-    true
-  )
-  assert.equal(
-    await page
       .locator('.brand-mark')
       .evaluate((image) => image.complete && image.naturalWidth > 0),
     true
@@ -138,7 +132,7 @@ try {
       ),
       true
     )
-    assert.equal(await page.locator('.auth-art').isVisible(), width >= 768)
+    assert.equal(await page.locator('.brand-mark').isVisible(), width >= 1024)
     await page.screenshot({
       path: join(appDirectory, `out/login-${width}-${height}.png`),
       fullPage: true
@@ -146,8 +140,10 @@ try {
   }
   await page.setViewportSize({ width: 1120, height: 760 })
   assert.equal(
-    await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
-    'rgb(255, 255, 255)'
+    await page.evaluate(
+      () => getComputedStyle(document.documentElement).colorScheme
+    ),
+    'light'
   )
   const screenshot = join(appDirectory, 'out/smoke.png')
   await page.screenshot({ path: screenshot, fullPage: true })

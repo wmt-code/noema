@@ -139,6 +139,9 @@ test(
         .count(),
       1
     )
+    await page.getByRole('button', { name: '切换深色主题' }).click()
+    await page.reload()
+    await page.getByRole('button', { name: '切换浅色主题' }).click()
     await chooseFilter('项目排序', '项目名称')
     await chooseFilter('项目排序', '最近更新')
     const sortTrigger = main().getByRole('combobox', { name: '项目排序' })
@@ -317,6 +320,12 @@ test(
     for (const status of ['草稿', '制作中', '已完成', '全部状态']) {
       await chooseFilter('筛选状态', status)
     }
+    await main().getByRole('tab', { name: '制作进度' }).click()
+    assert.deepEqual(
+      await main().getByRole('tabpanel').locator('dd').allTextContents(),
+      ['1', '0', '1']
+    )
+    await main().getByRole('tab', { name: '项目概览' }).click()
     const extraProjects = await Promise.all(
       [
         '雨停之前',
@@ -327,9 +336,16 @@ test(
         prisma.project.create({ data: { name, ownerId: owner.id } })
       )
     )
-    await main().getByRole('button', { name: '所有项目', exact: true }).click()
     await main().getByRole('button', { name: '刷新列表' }).click()
     await main().getByText('5 个项目', { exact: true }).waitFor()
+    await main().getByRole('button', { name: '雨停之前', exact: true }).click()
+    await main()
+      .getByRole('heading', { name: '还没有剧集', exact: true })
+      .waitFor()
+    await main()
+      .getByRole('button', { name: renamedProject, exact: true })
+      .click()
+    await row(editedTitle).waitFor()
     await main().getByRole('button', { name: '刷新列表' }).focus()
     await page.screenshot({
       path: join(appDirectory, 'out/project-list.png'),
@@ -381,7 +397,7 @@ test(
     )
     assert.equal(
       await navigation
-        .getByRole('button', { name: '退出登录', exact: true })
+        .getByRole('button', { name: '账号菜单', exact: true })
         .isVisible(),
       true
     )
@@ -415,8 +431,16 @@ test(
         BrowserWindow.getAllWindows()[0].setContentSize(1024, height)
       }, height)
       await page.waitForFunction((height) => innerHeight === height, height)
+      const episodeTitle = row(editedTitle).getByRole('button', {
+        name: editedTitle,
+        exact: true
+      })
+      assert.ok(
+        (await episodeTitle.boundingBox()).width >= 80,
+        'The episode title must remain readable in a narrow details column'
+      )
       const bounds = await page
-        .getByRole('button', { name: '退出登录', exact: true })
+        .getByRole('button', { name: '账号菜单', exact: true })
         .evaluate((button) => {
           const rect = button.getBoundingClientRect()
           return { top: rect.top, bottom: rect.bottom, viewport: innerHeight }
@@ -449,11 +473,50 @@ test(
       ),
       true
     )
-    await row(editedTitle).waitFor()
+    const projectCard = main().getByRole('button', {
+      name: renamedProject,
+      exact: true
+    })
+    await projectCard.click()
+    const detailSheet = page.getByRole('dialog', {
+      name: renamedProject,
+      exact: true
+    })
+    await detailSheet
+      .getByTestId('episode-row')
+      .getByRole('button', { name: editedTitle, exact: true })
+      .waitFor()
+    assert.equal(
+      await detailSheet.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      true
+    )
+    await detailSheet.evaluate((el) =>
+      Promise.all(el.getAnimations().map((animation) => animation.finished))
+    )
+    await detailSheet
+      .getByRole('button', { name: editedTitle, exact: true })
+      .click()
+    const mobileEditor = page.getByRole('dialog', {
+      name: '编辑剧集',
+      exact: true
+    })
+    await mobileEditor
+      .getByRole('button', { name: '取消', exact: true })
+      .click()
+    await mobileEditor.waitFor({ state: 'hidden' })
+    await detailSheet
+      .getByRole('button', { name: editedTitle, exact: true })
+      .waitFor()
     await page.screenshot({
       path: join(appDirectory, 'out/projects-narrow.png'),
       fullPage: true
     })
+    await page.keyboard.press('Escape')
+    await detailSheet.waitFor({ state: 'hidden' })
+    assert.equal(
+      await projectCard.evaluate((el) => el === document.activeElement),
+      true
+    )
     await page.setViewportSize({ width: 1280, height: 820 })
 
     await prisma.project.deleteMany({
@@ -497,14 +560,27 @@ test(
     assert.equal(await restartedBackend.getUrl(), base)
     page = await launch()
     await main()
-      .getByRole('heading', { name: '我的项目', exact: true })
-      .waitFor()
-    await main()
-      .getByRole('button', { name: renamedProject, exact: true })
-      .click()
-    await main()
       .getByRole('heading', { name: renamedProject, exact: true })
       .waitFor()
+    // A newer project from another session must not replace the open project on refresh.
+    const otherProject = await prisma.project.create({
+      data: { ownerId: owner.id, name: '另一个会话创建的项目' }
+    })
+    await main().getByRole('button', { name: '刷新列表' }).click()
+    await main()
+      .getByRole('button', { name: otherProject.name, exact: true })
+      .waitFor()
+    assert.equal(
+      await main()
+        .getByRole('button', { name: renamedProject, exact: true })
+        .getAttribute('aria-pressed'),
+      'true'
+    )
+    await prisma.project.delete({ where: { id: otherProject.id } })
+    await main().getByRole('button', { name: '刷新列表' }).click()
+    await main()
+      .getByRole('button', { name: otherProject.name, exact: true })
+      .waitFor({ state: 'detached' })
     await row(editedTitle)
       .getByText('已完成', { exact: true })
       .filter({ visible: true })
@@ -576,7 +652,8 @@ test(
       0
     )
 
-    await page.getByRole('button', { name: '退出登录', exact: true }).click()
+    await page.getByRole('button', { name: '账号菜单', exact: true }).click()
+    await page.getByRole('menuitem', { name: '退出登录', exact: true }).click()
     await page
       .getByRole('heading', { name: '登录 Noema', exact: true })
       .waitFor()
