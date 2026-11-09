@@ -128,7 +128,7 @@ These serve as the fallback; there is no separate default.css file. */
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-sm text-foreground;
     font-family: var(--font-sans), system-ui, sans-serif;
   }
   html {
