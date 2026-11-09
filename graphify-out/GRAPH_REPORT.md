@@ -1,16 +1,16 @@
 # Graph Report - noema  (2026-11-06)
 
 ## Corpus Check
-- 138 files · ~270,461 words
+- 138 files · ~271,196 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1215 nodes · 2137 edges · 82 communities (62 shown, 14 thin omitted)
+- 1217 nodes · 2142 edges · 82 communities (62 shown, 14 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 51 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0ba090ca`
+- Built from commit: `6bb58ba6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -20,7 +20,7 @@
 - dependencies
 - dependencies
 - scripts
-- shared/api.ts
+- chat-runtime.tsx
 - project-list.tsx
 - devDependencies
 - sidebar.tsx
@@ -39,7 +39,7 @@
 - file.tsx
 - AI 真人短剧创作平台 — Engineering Plan
 - 11. 实施计划
-- nav-user.tsx
+- shared/api.ts
 - 6. AI 生成任务设计
 - .prettierrc.json
 - 20261103000000_init/migration.sql
@@ -55,29 +55,29 @@
 - 4. 数据模型
 - 8. API 与事件契约
 - thread.aui.tsx
-- cn
+- tool-fallback.aui.tsx
 - dev.mjs
-- chat.controller.ts
+- agent-config.service.ts
 - settings-dialog.tsx
-- image.tsx
-- dashboard-layout.tsx
+- cn
+- button.tsx
 - model-selector.tsx
-- .login
+- AuthService
 - AGENTS.md
 - thread-list.aui.tsx
 - AuthRequest
 - project-details.tsx
-- sheet.tsx
+- main/api.ts
 - attachment.aui.tsx
-- button.tsx
+- input-group.tsx
 - agent-attachments.ts
-- agent-config.service.ts
 - ModelCredentialService
+- agent.controller.ts
 - reasoning.tsx
 - tool-group.aui.tsx
 - 20261105093000_agent_configuration/migration.sql
 - markdown-text.tsx
-- attachment-state.ts
+- alert.tsx
 - Project
 - scripts
 - devDependencies
@@ -97,8 +97,8 @@
 2. `AuthRequest` - 39 edges
 3. `scripts` - 20 edges
 4. `Button()` - 18 edges
-5. `PrismaService` - 17 edges
-6. `ModelCredentialService` - 16 edges
+5. `ModelCredentialService` - 17 edges
+6. `PrismaService` - 17 edges
 7. `compilerOptions` - 15 edges
 8. `AgentController` - 15 edges
 9. `compilerOptions` - 15 edges
@@ -111,10 +111,10 @@
   apps/desktop/src/renderer/src/components/assistant-ui/elements/attachment.aui.tsx → apps/desktop/src/renderer/src/lib/utils.ts
 - `FileName()` --calls--> `cn()`  [EXTRACTED]
   apps/desktop/src/renderer/src/components/assistant-ui/elements/file.tsx → apps/desktop/src/renderer/src/lib/utils.ts
-- `ImagePreview()` --calls--> `cn()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/components/assistant-ui/elements/image.tsx → apps/desktop/src/renderer/src/lib/utils.ts
-- `ImageFilename()` --calls--> `cn()`  [EXTRACTED]
-  apps/desktop/src/renderer/src/components/assistant-ui/elements/image.tsx → apps/desktop/src/renderer/src/lib/utils.ts
+- `defaultComponents` --calls--> `cn()`  [EXTRACTED]
+  apps/desktop/src/renderer/src/components/assistant-ui/elements/markdown-text.tsx → apps/desktop/src/renderer/src/lib/utils.ts
+- `ShimmerLabel()` --calls--> `cn()`  [EXTRACTED]
+  apps/desktop/src/renderer/src/components/assistant-ui/elements/surfaces.tsx → apps/desktop/src/renderer/src/lib/utils.ts
 
 ## Import Cycles
 - None detected.
@@ -122,8 +122,8 @@
 ## Communities (82 total, 14 thin omitted)
 
 ### Community 0 - "app.module.ts"
-Cohesion: 0.14
-Nodes (13): Response, AuthGuard, CurrentUser, Public(), Injectable, AuthService, credentials(), derive() (+5 more)
+Cohesion: 0.18
+Nodes (9): Response, AuthGuard, CurrentUser, Public(), Injectable, publicUser, HealthController, Controller (+1 more)
 
 ### Community 1 - "第一阶段开发步骤"
 Cohesion: 0.05
@@ -141,21 +141,21 @@ Nodes (31): dependencies, assistant-stream, @assistant-ui/react, @assistant-ui/r
 Cohesion: 0.04
 Nodes (44): eslint, eslint-config-prettier, @eslint/js, eslint-plugin-react-hooks, globals, description, devDependencies, eslint (+36 more)
 
-### Community 5 - "shared/api.ts"
-Cohesion: 0.06
-Nodes (42): chatStream(), forgetSession(), handleRequest(), HttpError, perform(), restoreSession(), send(), serviceUrl() (+34 more)
+### Community 5 - "chat-runtime.tsx"
+Cohesion: 0.10
+Nodes (20): addFile, attachments, ChatRuntime(), documents, images, useChatRuntime(), AgentSettings(), action() (+12 more)
 
 ### Community 6 - "project-list.tsx"
-Cohesion: 0.11
-Nodes (18): Alert(), AlertDescription(), alertVariants, Card(), CardAction(), CardContent(), CardHeader(), CardTitle() (+10 more)
+Cohesion: 0.13
+Nodes (16): Card(), CardAction(), CardContent(), CardHeader(), CardTitle(), Empty(), EmptyContent(), EmptyDescription() (+8 more)
 
 ### Community 7 - "devDependencies"
 Cohesion: 0.05
 Nodes (39): description, devDependencies, electron, electron-vite, playwright-core, tailwindcss, @tailwindcss/vite, tw-animate-css (+31 more)
 
 ### Community 8 - "sidebar.tsx"
-Cohesion: 0.09
-Nodes (20): Sidebar(), SidebarContent(), SidebarContext, SidebarContextProps, SidebarFooter(), SidebarGroup(), SidebarGroupContent(), SidebarGroupLabel() (+12 more)
+Cohesion: 0.05
+Nodes (34): DropdownMenu(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuSeparator(), DropdownMenuTrigger(), Sheet() (+26 more)
 
 ### Community 9 - "compilerOptions"
 Cohesion: 0.10
@@ -206,8 +206,8 @@ Cohesion: 0.29
 Nodes (6): 代码提交规范, 使用方式, 工单引用, 格式, 示例, 类型
 
 ### Community 21 - "file.tsx"
-Cohesion: 0.06
-Nodes (50): File, FileDataKind, FileDownload(), FileDownloadProps, FileIconDisplay(), FileIconDisplayProps, FileImpl(), FileName() (+42 more)
+Cohesion: 0.05
+Nodes (52): File, FileDataKind, FileDownload(), FileDownloadProps, FileIconDisplay(), FileIconDisplayProps, FileImpl(), FileName() (+44 more)
 
 ### Community 22 - "AI 真人短剧创作平台 — Engineering Plan"
 Cohesion: 0.33
@@ -217,9 +217,9 @@ Nodes (6): 10. 项目结构, 12.1 测试策略, 12.2 工程要求, 12. 测试与
 Cohesion: 0.33
 Nodes (6): 11. 实施计划, Phase 1 — 工程基础与项目管理, Phase 2 — Agent 创作与分镜, Phase 3 — AI 媒体生成, Phase 4 — 质量审核与成片, Phase 5 — 集成测试与交付
 
-### Community 24 - "nav-user.tsx"
-Cohesion: 0.17
-Nodes (7): DropdownMenu(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuSeparator(), DropdownMenuTrigger()
+### Community 24 - "shared/api.ts"
+Cohesion: 0.15
+Nodes (12): api, Window, ApiError, AgentConfig, AgentModel, AgentProvider, ApiRequest, ApiResponse (+4 more)
 
 ### Community 25 - "6. AI 生成任务设计"
 Cohesion: 0.40
@@ -250,8 +250,8 @@ Cohesion: 0.50
 Nodes (4): 9.1 进程划分, 9.2 素材处理, 9.3 安全要求, 9. 桌面端工程设计
 
 ### Community 34 - "AgentSettings.tsx"
-Cohesion: 0.15
-Nodes (13): defaults, limitFields, Field(), FieldContent(), FieldDescription(), FieldGroup(), FieldLabel(), FieldLegend() (+5 more)
+Cohesion: 0.16
+Nodes (12): defaults, limitFields, Field(), FieldContent(), FieldDescription(), FieldGroup(), FieldLabel(), FieldLegend() (+4 more)
 
 ### Community 36 - "1. 项目目标"
 Cohesion: 0.67
@@ -267,35 +267,35 @@ Nodes (3): 8.1 REST API, 8.2 实时事件, 8. API 与事件契约
 
 ### Community 40 - "thread.aui.tsx"
 Cohesion: 0.06
-Nodes (26): ThreadFollowupSuggestions(), AssistantMessage(), ComposerAction(), EMPTY_COMPONENTS, isNewChatView(), messageGroupBy, nextFocusable(), reasoningDuration() (+18 more)
+Nodes (28): ThreadFollowupSuggestions(), Image, AssistantMessage(), BranchPicker(), ComposerAction(), EMPTY_COMPONENTS, isNewChatView(), messageGroupBy (+20 more)
 
-### Community 41 - "cn"
-Cohesion: 0.11
-Nodes (33): BranchPicker(), answerLabels(), APPROVAL_OPTION_DEFAULT_LABELS, approvalOptionLabel(), ApprovalReceipt, formatToolDuration(), formatUnknownValue(), isAllowKind() (+25 more)
+### Community 41 - "tool-fallback.aui.tsx"
+Cohesion: 0.10
+Nodes (30): answerLabels(), APPROVAL_OPTION_DEFAULT_LABELS, approvalOptionLabel(), ApprovalReceipt, formatToolDuration(), formatUnknownValue(), isAllowKind(), isKnownKind() (+22 more)
 
-### Community 46 - "chat.controller.ts"
-Cohesion: 0.12
-Nodes (12): AgentConfigService, Injectable, AgentService, Injectable, entry, messageId, part, threadSelect (+4 more)
+### Community 46 - "agent-config.service.ts"
+Cohesion: 0.10
+Nodes (20): agentConfigSchema, AgentConfigService, providerSchema, runInputSchema, runOutputSchema, Injectable, AgentDefinition, agentLimitsSchema (+12 more)
 
 ### Community 47 - "settings-dialog.tsx"
 Cohesion: 0.12
 Nodes (15): navigation, Props, SettingsDialog(), SettingsSection, Breadcrumb(), BreadcrumbItem(), BreadcrumbList(), BreadcrumbPage() (+7 more)
 
-### Community 48 - "image.tsx"
-Cohesion: 0.11
-Nodes (26): copyImagePart(), dataUriToBlob(), defaultFilenameFromImage(), downloadImagePart(), extensionForMimeType(), Image, ImageActions(), ImageActionsProps (+18 more)
+### Community 48 - "cn"
+Cohesion: 0.12
+Nodes (26): copyImagePart(), dataUriToBlob(), defaultFilenameFromImage(), downloadImagePart(), extensionForMimeType(), ImageActions(), ImageActionsProps, ImageContentFilterError() (+18 more)
 
-### Community 49 - "dashboard-layout.tsx"
-Cohesion: 0.18
-Nodes (7): Avatar(), AvatarFallback(), AvatarImage(), Separator(), SidebarInset(), DashboardLayout(), ThemeSwitcher()
+### Community 49 - "button.tsx"
+Cohesion: 0.15
+Nodes (10): Avatar(), AvatarFallback(), AvatarImage(), Button(), buttonVariants, Separator(), SidebarInset(), DashboardLayout() (+2 more)
 
 ### Community 50 - "model-selector.tsx"
 Cohesion: 0.09
-Nodes (18): ModelSelector(), types, Command(), CommandEmpty(), CommandGroup(), CommandInput(), CommandItem(), CommandList() (+10 more)
+Nodes (18): ModelSelector(), providers, Command(), CommandEmpty(), CommandGroup(), CommandInput(), CommandItem(), CommandList() (+10 more)
 
-### Community 51 - ".login"
-Cohesion: 0.24
-Nodes (8): AuthController, Body, Controller, Get, HttpCode, Post, Req, Res
+### Community 51 - "AuthService"
+Cohesion: 0.16
+Nodes (12): AuthController, Body, Controller, Get, HttpCode, Post, Req, Res (+4 more)
 
 ### Community 52 - "AGENTS.md"
 Cohesion: 0.33
@@ -313,45 +313,45 @@ Nodes (38): readChatAttachments(), parseAgentInput(), AgentController, Body, Con
 Cohesion: 0.19
 Nodes (13): Badge(), badgeVariants, Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger(), ProjectDetails() (+5 more)
 
-### Community 56 - "sheet.tsx"
-Cohesion: 0.20
-Nodes (7): Sheet(), SheetContent(), SheetDescription(), SheetHeader(), SheetTitle(), Logistics(), LogisticsProps
+### Community 56 - "main/api.ts"
+Cohesion: 0.32
+Nodes (10): chatStream(), forgetSession(), handleRequest(), HttpError, perform(), restoreSession(), send(), serviceUrl() (+2 more)
 
 ### Community 57 - "attachment.aui.tsx"
-Cohesion: 0.18
-Nodes (11): AttachmentPreview(), AttachmentPreviewDialogProps, AttachmentPreviewProps, ComposerAddAttachment(), ComposerAttachments(), UserMessageAttachments(), TooltipIconButtonProps, Tooltip() (+3 more)
+Cohesion: 0.13
+Nodes (16): AttachmentPreview(), AttachmentPreviewDialogProps, AttachmentPreviewProps, AttachmentUI(), ComposerAddAttachment(), ComposerAttachments(), UserMessageAttachments(), useAttachmentState() (+8 more)
 
-### Community 58 - "button.tsx"
-Cohesion: 0.17
-Nodes (10): Button(), buttonVariants, InputGroup(), InputGroupAddon(), inputGroupAddonVariants, InputGroupButton(), inputGroupButtonVariants, InputGroupInput() (+2 more)
+### Community 58 - "input-group.tsx"
+Cohesion: 0.21
+Nodes (8): InputGroup(), InputGroupAddon(), inputGroupAddonVariants, InputGroupButton(), inputGroupButtonVariants, InputGroupInput(), Input(), Textarea()
 
 ### Community 59 - "agent-attachments.ts"
 Cohesion: 0.47
 Nodes (4): configureChatBodyParser(), AppModule, bootstrap(), Module
 
-### Community 60 - "agent-config.service.ts"
-Cohesion: 0.23
-Nodes (9): agentConfigSchema, providerSchema, runInputSchema, runOutputSchema, AgentDefinition, agentLimitsSchema, AgentScope, Resource (+1 more)
+### Community 60 - "ModelCredentialService"
+Cohesion: 0.24
+Nodes (4): ModelCredentialService, Injectable, isDeepSeekUrl(), webSearchTool()
 
-### Community 61 - "ModelCredentialService"
-Cohesion: 0.16
-Nodes (10): credentialProviderSchema, AgentModelService, Injectable, compatibleBaseUrl(), dispatcher, gatewayFetch(), globalIPv6, publicAddress() (+2 more)
+### Community 61 - "agent.controller.ts"
+Cohesion: 0.22
+Nodes (8): credentialProviderSchema, AgentModelService, Injectable, compatibleBaseUrl(), dispatcher, gatewayFetch(), globalIPv6, publicAddress()
 
 ### Community 62 - "reasoning.tsx"
-Cohesion: 0.14
-Nodes (17): CollapsibleContent(), CollapsibleRoot, CollapsibleTrigger(), ANIMATION_DURATION, Reasoning, ReasoningGroup, ReasoningRoot, ReasoningContent() (+9 more)
+Cohesion: 0.20
+Nodes (12): ANIMATION_DURATION, Reasoning, ReasoningGroup, ReasoningRoot, ReasoningContent(), ReasoningFade(), ReasoningPreviewContext, ReasoningRoot (+4 more)
 
 ### Community 63 - "tool-group.aui.tsx"
-Cohesion: 0.25
-Nodes (7): ToolGroup, ToolGroupComponent, ToolGroupContent(), ToolGroupRoot(), ToolGroupRootProps, ToolGroupTrigger(), toolGroupVariants
+Cohesion: 0.21
+Nodes (10): CollapsibleContent(), CollapsibleRoot, CollapsibleTrigger(), ToolGroup, ToolGroupComponent, ToolGroupContent(), ToolGroupRoot(), ToolGroupRootProps (+2 more)
 
 ### Community 66 - "markdown-text.tsx"
-Cohesion: 0.22
-Nodes (7): CodeHeader(), defaultComponents, MarkdownText, MarkdownTextProps, TooltipIconButton, useCopyToClipboard(), UseCopyToClipboardOptions
+Cohesion: 0.28
+Nodes (6): CodeHeader(), defaultComponents, MarkdownText, MarkdownTextProps, useCopyToClipboard(), UseCopyToClipboardOptions
 
-### Community 67 - "attachment-state.ts"
-Cohesion: 0.53
-Nodes (4): AttachmentUI(), useAttachmentState(), useAttachmentSrc(), useFileSrc()
+### Community 67 - "alert.tsx"
+Cohesion: 0.40
+Nodes (3): Alert(), AlertDescription(), alertVariants
 
 ### Community 69 - "Project"
 Cohesion: 0.31
@@ -371,23 +371,23 @@ Nodes (4): name, private, type, version
 
 ## Knowledge Gaps
 - **381 isolated node(s):** `semi`, `singleQuote`, `trailingComma`, `endOfLine`, `$schema` (+376 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 517 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 518 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `cn` to `markdown-text.tsx`, `attachment-state.ts`, `thread.aui.tsx`, `image.tsx`, `file.tsx`, `thread-list.aui.tsx`, `attachment.aui.tsx`, `reasoning.tsx`, `tool-group.aui.tsx`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `status()` connect `shared/api.ts` to `database.mjs`?**
+- **Why does `cn()` connect `cn` to `markdown-text.tsx`, `thread.aui.tsx`, `tool-fallback.aui.tsx`, `file.tsx`, `thread-list.aui.tsx`, `attachment.aui.tsx`, `reasoning.tsx`, `tool-group.aui.tsx`?**
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `status()` connect `chat-runtime.tsx` to `database.mjs`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **What connects `semi`, `singleQuote`, `trailingComma` to the rest of the system?**
   _381 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `app.module.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.13538461538461538 - nodes in this community are weakly interconnected._
 - **Should `第一阶段开发步骤` be split into smaller, more focused modules?**
   _Cohesion score 0.04734299516908213 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06451612903225806 - nodes in this community are weakly interconnected._
 - **Should `scripts` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
+- **Should `chat-runtime.tsx` be split into smaller, more focused modules?**
+  _Cohesion score 0.10256410256410256 - nodes in this community are weakly interconnected._

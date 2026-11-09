@@ -87,17 +87,15 @@ async function send(
   if (!response.ok) {
     if (response.status === 503 && path.endsWith('/agent-runs')) {
       const body = await response.json().catch(() => null)
-      if (
-        body?.code === 'MISSING_MODEL_CREDENTIAL' &&
-        body.provider === 'tavily'
-      )
+      if (body?.code === 'MISSING_SEARCH_CREDENTIAL')
         throw new HttpError(
           503,
-          '请在模型设置的账号密钥中保存 Tavily 密钥，或关闭联网搜索。'
+          '请在模型设置的账号密钥中保存 DeepSeek 或 Tavily 密钥，或关闭联网搜索。'
         )
       const names = {
         openai: 'OpenAI',
         anthropic: 'Anthropic',
+        deepseek: 'DeepSeek',
         'openai-compatible': 'OpenAI 兼容服务'
       }
       if (
@@ -272,9 +270,13 @@ async function perform(request: ApiRequest): Promise<unknown> {
     case 'credentials:save':
     case 'credentials:delete': {
       if (
-        !['openai', 'anthropic', 'openai-compatible', 'tavily'].includes(
-          request.provider
-        )
+        ![
+          'openai',
+          'anthropic',
+          'deepseek',
+          'openai-compatible',
+          'tavily'
+        ].includes(request.provider)
       )
         throw new ValidationError('Invalid provider')
       if (request.type === 'credentials:delete')

@@ -26,12 +26,72 @@ test(
     let calls = 0
     let toolRequests = 0
     let observedContext
+    let deepseekSearchCalls = 0
+    const deepseekKey = 'sk-test-deepseek-only'
+    const deepseekUrl = 'https://api.deepseek.com'
     const secret = 'sk-test-noema-private'
     globalThis.fetch = async (input, options) => {
       const url = new URL(
         typeof input === 'string' ? input : (input.url ?? input)
       )
       if (url.origin === base) return originalFetch(input, options)
+      if (url.origin === deepseekUrl) {
+        assert.equal(
+          new Headers(options.headers).get('authorization'),
+          `Bearer ${deepseekKey}`
+        )
+        const body = JSON.parse(options.body)
+        if (url.pathname === '/v1/tools/search') {
+          assert.deepEqual(body, {
+            query: '海边拍摄',
+            count: 5,
+            need_content: false
+          })
+          deepseekSearchCalls++
+          return Response.json({
+            results: [
+              {
+                title: '海边',
+                url: 'https://example.org/sea',
+                summary: '落日',
+                snippet: '海边的落日'
+              }
+            ]
+          })
+        }
+        assert.equal(url.pathname, '/chat/completions')
+        assert.ok(
+          body.tools.some((tool) => tool.function.name === 'web_search')
+        )
+        const last = body.messages.at(-1)
+        const done = last.role === 'tool'
+        if (done) assert.match(last.content, /example\.org\/sea/)
+        const delta = done
+          ? { content: '搜索成功' }
+          : {
+              tool_calls: [
+                {
+                  index: 0,
+                  id: 'call_search',
+                  type: 'function',
+                  function: {
+                    name: 'web_search',
+                    arguments: '{"query":"海边拍摄"}'
+                  }
+                }
+              ]
+            }
+        return new Response(
+          'data: ' +
+            JSON.stringify({
+              choices: [
+                { index: 0, delta, finish_reason: done ? 'stop' : 'tool_calls' }
+              ]
+            }) +
+            '\n\ndata: [DONE]\n\n',
+          { headers: { 'content-type': 'text/event-stream' } }
+        )
+      }
       assert.equal(url.origin, 'https://api.openai.com')
       calls++
       assert.equal(
@@ -552,6 +612,50 @@ test(
         assert.ok(refused.isDone())
         assert.equal((await send('PUT', configPath, token, config)).status, 200)
         assert.equal((await send('DELETE', path, token)).status, 204)
+        mode = 'success'
+      }
+    )
+    await t.test(
+      'DeepSeek chats search directly, and a different model can reuse the same key',
+      async () => {
+        const keyPath = '/model-credentials/deepseek'
+        const run = () => send('POST', runPath, token, { prompt: '搜索' })
+        const tools = ['web_search']
+        assert.ok(
+          catalog.some(
+            (item) =>
+              item.provider === 'deepseek' && item.id === 'deepseek-v4-pro'
+          )
+        )
+        assert.equal(
+          (await send('PUT', keyPath, token, { apiKey: deepseekKey })).status,
+          204
+        )
+        const official = {
+          ...config,
+          provider: 'deepseek',
+          model: 'deepseek-v4-pro',
+          tools
+        }
+        assert.equal(
+          (await send('PUT', configPath, token, official)).status,
+          200
+        )
+        assert.deepEqual(await (await run()).json(), { text: '搜索成功' })
+        assert.equal(deepseekSearchCalls, 1)
+        assert.equal(
+          (await send('PUT', configPath, token, { ...config, tools })).status,
+          200
+        )
+        mode = 'search'
+        toolRequests = 0
+        assert.deepEqual(await (await run()).json(), { text: '调用成功' })
+        assert.equal(deepseekSearchCalls, 2)
+        assert.deepEqual(observedContext, [
+          { title: '海边', url: 'https://example.org/sea', excerpt: '落日' }
+        ])
+        assert.equal((await send('DELETE', keyPath, token)).status, 204)
+        assert.equal((await send('PUT', configPath, token, config)).status, 200)
         mode = 'success'
       }
     )

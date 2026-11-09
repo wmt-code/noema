@@ -344,11 +344,9 @@ export class ChatController {
           typeof problem === 'object' &&
           problem !== null &&
           'code' in problem &&
-          problem.code === 'MISSING_MODEL_CREDENTIAL' &&
-          'provider' in problem &&
-          problem.provider === 'tavily'
+          problem.code === 'MISSING_SEARCH_CREDENTIAL'
         const message = missingSearchKey
-          ? '请在模型设置的账号密钥中保存 Tavily 密钥，或关闭联网搜索。'
+          ? '请在模型设置的账号密钥中保存 DeepSeek 或 Tavily 密钥，或关闭联网搜索。'
           : status === 502 && error instanceof HttpException
             ? error.message
             : ((

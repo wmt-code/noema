@@ -8,6 +8,7 @@ import {
 } from '@earendil-works/pi-ai/models'
 import { openaiProvider } from '@earendil-works/pi-ai/providers/openai'
 import { anthropicProvider } from '@earendil-works/pi-ai/providers/anthropic'
+import { deepseekProvider } from '@earendil-works/pi-ai/providers/deepseek'
 import {
   BadRequestException,
   Injectable,
@@ -22,6 +23,7 @@ export class AgentModelService {
   constructor(private readonly credentials: ModelCredentialService) {
     this.models.setProvider(openaiProvider())
     this.models.setProvider(anthropicProvider())
+    this.models.setProvider(deepseekProvider())
     this.models.setProvider(
       createProvider({
         id: 'openai-compatible',
