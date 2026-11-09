@@ -138,7 +138,7 @@ export class AgentService {
         fail(
           new BadGatewayException(
             event.toolName === 'web_search'
-              ? '联网搜索失败，请检查 Tavily 密钥、额度或网络连接。'
+              ? `${definition.tools?.find((tool) => tool.name === 'web_search')?.label ?? '联网搜索'}失败，请检查密钥、额度或网络连接。`
               : 'Agent tool failed'
           )
         )

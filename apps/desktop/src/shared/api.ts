@@ -8,7 +8,8 @@ import type {
 } from '@noema/shared'
 
 export type User = { id: string; email: string }
-export type AgentProvider = 'openai' | 'anthropic' | 'openai-compatible'
+export type AgentProvider =
+  'openai' | 'anthropic' | 'deepseek' | 'openai-compatible'
 export type ThinkingLevel =
   'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'
 export type AgentModel = {

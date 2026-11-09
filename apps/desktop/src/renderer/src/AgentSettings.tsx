@@ -261,6 +261,7 @@ export function AgentSettings({
                   <SelectGroup>
                     <SelectItem value="openai">OpenAI</SelectItem>
                     <SelectItem value="anthropic">Anthropic</SelectItem>
+                    <SelectItem value="deepseek">DeepSeek</SelectItem>
                     <SelectItem value="openai-compatible">
                       OpenAI 兼容服务
                     </SelectItem>
@@ -494,8 +495,9 @@ export function AgentSettings({
                 <FieldContent>
                   <FieldLabel htmlFor="agent-web-search">联网搜索</FieldLabel>
                   <FieldDescription>
-                    在账号密钥中配置 Tavily
-                    后，支持工具调用的模型可以按需搜索网页并引用来源。
+                    DeepSeek
+                    官方连接使用模型密钥搜索。其他支持工具调用的模型共用账号的搜索服务，优先使用已配置的
+                    Tavily，其次使用 DeepSeek。
                   </FieldDescription>
                 </FieldContent>
                 <Switch

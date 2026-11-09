@@ -27,6 +27,7 @@ import { OwnershipService } from './ownership.service.js'
 export const providerSchema = z.enum([
   'openai',
   'anthropic',
+  'deepseek',
   'openai-compatible'
 ])
 export const agentConfigSchema = z.strictObject({
@@ -204,8 +205,14 @@ export class AgentConfigService {
         }
       })
     if (config.tools.includes('web_search')) {
-      const { apiKey } = await this.credentials.get(scope.user.id, 'tavily')
-      tools.push(webSearchTool(apiKey, config.limits.timeoutMs))
+      tools.push(
+        await webSearchTool(
+          this.credentials,
+          scope.user.id,
+          config.provider,
+          config.limits.timeoutMs
+        )
+      )
     }
     const text = await this.runtime.run(
       scope,

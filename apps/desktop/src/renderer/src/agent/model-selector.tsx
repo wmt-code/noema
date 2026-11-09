@@ -20,7 +20,11 @@ import {
 } from '@/components/ui/popover'
 
 import type { AgentModel } from '../../../shared/api'
-const types = ['openai', 'anthropic'] as const
+const providers = {
+  openai: 'OpenAI',
+  anthropic: 'Anthropic',
+  deepseek: 'DeepSeek'
+} as const
 export function ModelSelector({
   models,
   value,
@@ -85,11 +89,8 @@ export function ModelSelector({
                   OpenAI 兼容服务
                 </CommandItem>
               </CommandGroup>
-              {types.map((type) => (
-                <CommandGroup
-                  key={type}
-                  heading={type === 'openai' ? 'OpenAI' : 'Anthropic'}
-                >
+              {Object.entries(providers).map(([type, name]) => (
+                <CommandGroup key={type} heading={name}>
                   {models
                     .filter((model) => model.provider === type)
                     .map((model) => (

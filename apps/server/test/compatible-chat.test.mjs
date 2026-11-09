@@ -4,6 +4,41 @@ import { test } from 'node:test'
 import { z } from 'zod'
 import { AgentModelService } from '../dist/agent-model.service.js'
 import { AgentService } from '../dist/agent.service.js'
+import { webSearchTool } from '../dist/web-search.js'
+
+test('search only reuses compatible keys bound to an official DeepSeek endpoint', async () => {
+  let rows = []
+  let storedUrl
+  const credentials = {
+    list: async () => rows,
+    get: async (_, provider) => ({
+      apiKey: 'test-only',
+      baseUrl: provider === 'openai-compatible' ? storedUrl : null
+    })
+  }
+  const tool = (provider) => webSearchTool(credentials, 'owner', provider, 1000)
+  rows = [
+    {
+      provider: 'openai-compatible',
+      baseUrl: 'https://api.deepseek.com.evil.example/v1'
+    }
+  ]
+  await assert.rejects(
+    tool('openai-compatible'),
+    (error) => error.getStatus() === 503
+  )
+  rows[0].baseUrl = 'https://api.deepseek.com/v1'
+  storedUrl = 'https://other.example/v1'
+  await assert.rejects(
+    tool('openai-compatible'),
+    (error) => error.getStatus() === 503
+  )
+  storedUrl = rows[0].baseUrl
+  assert.equal((await tool('openai')).label, 'DeepSeek 联网搜索')
+  rows.push({ provider: 'tavily', baseUrl: null })
+  assert.equal((await tool('openai-compatible')).label, 'DeepSeek 联网搜索')
+  assert.equal((await tool('anthropic')).label, 'Tavily 联网搜索')
+})
 
 test('compatible chat sends plain text as a string and keeps image parts', async (t) => {
   const payloads = []
